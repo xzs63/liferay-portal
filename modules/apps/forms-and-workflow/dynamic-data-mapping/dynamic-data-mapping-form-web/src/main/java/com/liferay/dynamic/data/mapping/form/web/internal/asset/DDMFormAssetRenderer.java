@@ -26,13 +26,14 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecordVersion;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalService;
 import com.liferay.dynamic.data.mapping.service.permission.DDMFormInstancePermission;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Locale;
@@ -59,7 +60,7 @@ public class DDMFormAssetRenderer
 
 		_formInstanceRecord = formInstanceRecord;
 		_formInstanceRecordVersion = formInstanceRecordVersion;
-		_ddlRecordLocalService = ddmFormInstanceRecordLocalService;
+		_ddmFormInstanceRecordLocalService = ddmFormInstanceRecordLocalService;
 		_ddmFormRenderer = ddmFormRenderer;
 		_ddmFormValuesFactory = ddmFormValuesFactory;
 		_ddmFormValuesMerger = ddmFormValuesMerger;
@@ -88,6 +89,11 @@ public class DDMFormAssetRenderer
 		getAssetRendererFactory() {
 
 		return new DDMFormAssetRendererFactory();
+	}
+
+	@Override
+	public String[] getAvailableLanguageIds() {
+		return _formInstance.getAvailableLanguageIds();
 	}
 
 	@Override
@@ -161,8 +167,15 @@ public class DDMFormAssetRenderer
 
 	@Override
 	public boolean hasViewPermission(PermissionChecker permissionChecker) {
-		return DDMFormInstancePermission.contains(
-			permissionChecker, _formInstance, ActionKeys.VIEW);
+		try {
+			return DDMFormInstancePermission.contains(
+				permissionChecker, _formInstance, ActionKeys.VIEW);
+		}
+		catch (PortalException pe) {
+			_log.error(pe, pe);
+		}
+
+		return false;
 	}
 
 	@Override
@@ -178,8 +191,9 @@ public class DDMFormAssetRenderer
 		DDMFormViewFormInstanceRecordDisplayContext
 			ddmFormViewFormInstanceRecordDisplayContext =
 				new DDMFormViewFormInstanceRecordDisplayContext(
-					request, response, _ddlRecordLocalService, _ddmFormRenderer,
-					_ddmFormValuesFactory, _ddmFormValuesMerger);
+					request, response, _ddmFormInstanceRecordLocalService,
+					_ddmFormRenderer, _ddmFormValuesFactory,
+					_ddmFormValuesMerger);
 
 		request.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT,
@@ -191,7 +205,8 @@ public class DDMFormAssetRenderer
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMFormAssetRenderer.class);
 
-	private final DDMFormInstanceRecordLocalService _ddlRecordLocalService;
+	private final DDMFormInstanceRecordLocalService
+		_ddmFormInstanceRecordLocalService;
 	private final DDMFormRenderer _ddmFormRenderer;
 	private final DDMFormValuesFactory _ddmFormValuesFactory;
 	private final DDMFormValuesMerger _ddmFormValuesMerger;

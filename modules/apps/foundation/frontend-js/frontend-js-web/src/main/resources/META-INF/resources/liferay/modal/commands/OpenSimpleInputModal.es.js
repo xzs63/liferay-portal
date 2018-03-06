@@ -20,6 +20,7 @@ import SimpleInputModal from '../components/SimpleInputModal.es';
  * @param {!string} spritemap
  *
  * @return {SimpleInputModal} SimpleInputModal component instance
+ * @review
  *
  * @see SimpleInputModal
  *
@@ -53,27 +54,32 @@ import SimpleInputModal from '../components/SimpleInputModal.es';
  *   as "redirectURL" and, if no URL is obtained, the SimpleInputModal is simply
  *   disposed.
  */
-function openSimpleInputModal({
-	checkboxFieldLabel = '',
-	checkboxFieldName = '',
-	checkboxFieldValue = false,
-	dialogTitle,
-	formSubmitURL,
-	idFieldName = '',
-	idFieldValue = '',
-	mainFieldLabel,
-	mainFieldName,
-	mainFieldPlaceholder = '',
-	mainFieldValue = '',
-	namespace,
-	spritemap,
-}) {
+
+function openSimpleInputModal(
+	{
+		checkboxFieldLabel = '',
+		checkboxFieldName = '',
+		checkboxFieldValue = false,
+		dialogTitle,
+		formSubmitURL,
+		idFieldName = '',
+		idFieldValue = '',
+		mainFieldLabel,
+		mainFieldName,
+		mainFieldPlaceholder = '',
+		mainFieldValue = '',
+		namespace,
+		spritemap
+	}
+) {
 	let simpleInputModal = null;
 
 	/**
 	 * Callback executed when the SimpleInputModal component
 	 * is closed or the form cancel button is pressed.
+	 * @review
 	 */
+
 	function handleSimpleInputModalDisposal() {
 		if (simpleInputModal) {
 			if (!simpleInputModal.isDisposed()) {
@@ -88,12 +94,15 @@ function openSimpleInputModal({
 	 * Callback executed when the SimpleInputModal form receives a successful
 	 * response from server.
 	 * @param {{redirectURL: string}} serverResponseContent
+	 * @review
 	 */
+
 	function handleSimpleInputModalSubmission(serverResponseContent) {
 		if (serverResponseContent.redirectURL) {
 			if (Liferay.SPA) {
 				Liferay.SPA.app.navigate(serverResponseContent.redirectURL);
-			} else {
+			}
+			else {
 				location.href = serverResponseContent.redirectURL;
 			}
 		}
@@ -101,26 +110,28 @@ function openSimpleInputModal({
 		handleSimpleInputModalDisposal();
 	}
 
-	simpleInputModal = new SimpleInputModal({
-		checkboxFieldLabel,
-		checkboxFieldName,
-		checkboxFieldValue,
-		dialogTitle,
-		events: {
-			cancelButtonClicked: handleSimpleInputModalDisposal,
-			dialogHidden: handleSimpleInputModalDisposal,
-			formSuccess: handleSimpleInputModalSubmission,
-		},
-		formSubmitURL,
-		idFieldName,
-		idFieldValue,
-		mainFieldLabel,
-		mainFieldName,
-		mainFieldPlaceholder,
-		mainFieldValue,
-		namespace,
-		spritemap,
-	});
+	simpleInputModal = new SimpleInputModal(
+		{
+			checkboxFieldLabel,
+			checkboxFieldName,
+			checkboxFieldValue,
+			dialogTitle,
+			events: {
+				cancelButtonClicked: handleSimpleInputModalDisposal,
+				dialogHidden: handleSimpleInputModalDisposal,
+				formSuccess: handleSimpleInputModalSubmission
+			},
+			formSubmitURL,
+			idFieldName,
+			idFieldValue,
+			mainFieldLabel,
+			mainFieldName,
+			mainFieldPlaceholder,
+			mainFieldValue,
+			namespace,
+			spritemap
+		}
+	);
 
 	return simpleInputModal;
 }

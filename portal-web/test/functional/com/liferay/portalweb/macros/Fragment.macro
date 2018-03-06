@@ -8,7 +8,7 @@
 			<var name="fragmentName" value="${fragmentName}" />
 		</execute>
 
-		<execute macro="Fragment#submit" />
+		<execute macro="Modal#submit" />
 	</command>
 
 	<command name="editFragment">
@@ -17,15 +17,9 @@
 		</execute>
 	</command>
 
-	<command name="submit">
-		<execute function="Click" locator1="Button#MODAL_CONTENT_SUBMIT" />
-
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
-
 	<command name="typeFragmentEditor">
 		<var method="StringUtil#toUpperCase('${editor}')" name="key_editor" />
 
-		<execute function="Type#typeAceEditorNoError" locator1="Fragment#${key_editor}_EDITOR" value1="${templateScript}" />"
+		<execute function="Type#typeAceEditorNoError" locator1="Fragment#${key_editor}_EDITOR" value1="${templateScript}" />
 	</command>
 </definition>

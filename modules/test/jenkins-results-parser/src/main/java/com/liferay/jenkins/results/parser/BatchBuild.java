@@ -144,11 +144,23 @@ public class BatchBuild extends BaseBuild {
 			return invokedTime;
 		}
 
-		Pattern pattern = Pattern.compile(
-			JenkinsResultsParserUtil.combine(
-				"\\s*\\[echo\\]\\s*", Pattern.quote(getJobName()), "/",
-				Pattern.quote(getJobVariant()),
-				"\\s*invoked time: (?<invokedTime>[^\\n]*)"));
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("\\s*\\[echo\\]\\s*");
+
+		sb.append(Pattern.quote(getJobName()));
+
+		String jobVariant = getJobVariant();
+
+		if ((jobVariant != null) && !jobVariant.isEmpty()) {
+			sb.append("/");
+
+			sb.append(Pattern.quote(jobVariant));
+		}
+
+		sb.append("\\s*invoked time: (?<invokedTime>[^\\n]*)");
+
+		Pattern pattern = Pattern.compile(sb.toString());
 
 		Build parentBuild = getParentBuild();
 
@@ -269,9 +281,14 @@ public class BatchBuild extends BaseBuild {
 				continue;
 			}
 
+			AxisBuild axisBuild = getAxisBuild(axisVariable);
+
+			if (axisBuild == null) {
+				continue;
+			}
+
 			testResults.addAll(
-				TestResult.getTestResults(
-					getAxisBuild(axisVariable), suitesJSONArray, testStatus));
+				getTestResults(axisBuild, suitesJSONArray, testStatus));
 		}
 
 		return testResults;
@@ -461,7 +478,8 @@ public class BatchBuild extends BaseBuild {
 				for (TestResult testResult : getTestResults(null)) {
 					String testStatus = testResult.getStatus();
 
-					if (testStatus.equals("PASSED") ||
+					if (testStatus.equals("FIXED") ||
+						testStatus.equals("PASSED") ||
 						testStatus.equals("SKIPPED")) {
 
 						continue;

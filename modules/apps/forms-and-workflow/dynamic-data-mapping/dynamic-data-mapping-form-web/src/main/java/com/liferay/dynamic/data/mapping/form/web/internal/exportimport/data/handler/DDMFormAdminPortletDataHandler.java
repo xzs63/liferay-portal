@@ -14,9 +14,9 @@
 
 package com.liferay.dynamic.data.mapping.form.web.internal.exportimport.data.handler;
 
+import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.exportimport.staged.model.repository.DDMFormInstanceRecordStagedModelRepository;
 import com.liferay.dynamic.data.mapping.exportimport.staged.model.repository.DDMFormInstanceStagedModelRepository;
-import com.liferay.dynamic.data.mapping.form.web.internal.constants.DDMFormPortletKeys;
 import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
@@ -45,7 +45,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Leonardo Barros
  */
 @Component(
-	property = {"javax.portlet.name=" + DDMFormPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN},
+	property = {"javax.portlet.name=" + DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN},
 	service = PortletDataHandler.class
 )
 public class DDMFormAdminPortletDataHandler extends BasePortletDataHandler {
@@ -69,17 +69,17 @@ public class DDMFormAdminPortletDataHandler extends BasePortletDataHandler {
 		PortletDataHandlerControl[] formsPortletDataHandlerControlChildren = {
 			new PortletDataHandlerBoolean(
 				NAMESPACE, "ddm-data-provider", true, false, null,
-				DDMDataProviderInstance.class.getName())
+				DDMDataProviderInstance.class.getName()),
+			new PortletDataHandlerBoolean(
+				NAMESPACE, "form-entries", true, false, null,
+				DDMFormInstanceRecord.class.getName())
 		};
 
 		setExportControls(
 			new PortletDataHandlerBoolean(
 				NAMESPACE, "forms", true, false,
 				formsPortletDataHandlerControlChildren,
-				DDMFormInstance.class.getName()),
-			new PortletDataHandlerBoolean(
-				NAMESPACE, "form-entries", true, false, null,
-				DDMFormInstanceRecord.class.getName()));
+				DDMFormInstance.class.getName()));
 	}
 
 	@Override

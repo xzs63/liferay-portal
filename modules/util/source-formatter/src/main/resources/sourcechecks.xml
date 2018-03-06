@@ -35,11 +35,8 @@
 			<property name="allowedExportPackageDirName" value="journal-content-asset-addon-entry/journal-content-asset-addon-entry-common" />
 			<property name="allowedExportPackageDirName" value="journal-service" />
 			<property name="allowedExportPackageDirName" value="journal-web" />
-			<property name="allowedExportPackageDirName" value="modules/apps/collaboration/blogs/blogs-item-selector-web" />
-			<property name="allowedExportPackageDirName" value="modules/apps/collaboration/blogs/blogs-recent-bloggers-web" />
 			<property name="allowedExportPackageDirName" value="modules/apps/collaboration/blogs/blogs-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/collaboration/bookmarks/bookmarks-service" />
-			<property name="allowedExportPackageDirName" value="modules/apps/collaboration/document-library/document-library-web" />
 			<property name="allowedExportPackageDirName" value="modules/apps/collaboration/message-boards/message-boards-web" />
 			<property name="allowedExportPackageDirName" value="modules/apps/collaboration/microblogs/microblogs-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/collaboration/wiki/wiki-service" />
@@ -48,7 +45,6 @@
 			<property name="allowedExportPackageDirName" value="modules/apps/forms-and-workflow/dynamic-data-lists/dynamic-data-lists-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/alloy/alloy-mvc" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/frontend-editor/frontend-editor-lang" />
-			<property name="allowedExportPackageDirName" value="modules/apps/foundation/frontend-js/frontend-js-loader-modules-extender" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/mobile-device-rules/mobile-device-rules-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/petra/petra-content" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/petra/petra-doulos" />
@@ -64,10 +60,10 @@
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal/portal-instance-lifecycle" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal/portal-spring-extender" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal/portal-upgrade" />
-			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal/portal-upload" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-cache/portal-cache" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-cache/portal-cache-ehcache" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-cache/portal-cache-ehcache-provider" />
+			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-cache/portal-cache-ehcache-spi" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-configuration/portal-configuration-upgrade-util" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-portlet-bridge/portal-portlet-bridge-soy" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-remote/portal-remote-soap-extender" />
@@ -78,18 +74,15 @@
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-security/portal-security-ldap" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-security/portal-security-service-access-policy-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-security-sso/portal-security-sso-openid-connect" />
-			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-security-sso/portal-security-sso-token" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-settings/portal-settings-web" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-template/portal-template-soy" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/users-admin/users-admin-web" />
 			<property name="allowedExportPackageDirName" value="modules/apps/knowledge-base/knowledge-base-markdown-converter" />
 			<property name="allowedExportPackageDirName" value="modules/apps/knowledge-base/knowledge-base-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/mail-reader/mail-reader-service" />
-			<property name="allowedExportPackageDirName" value="modules/apps/marketplace/marketplace-store-web" />
 			<property name="allowedExportPackageDirName" value="modules/apps/portal-security-wedeploy-auth/portal-security-wedeploy-auth-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/push-notifications/push-notifications-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/shopping/shopping-service" />
-			<property name="allowedExportPackageDirName" value="modules/apps/social-private-messaging/social-private-messaging-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/static/" />
 			<property name="allowedExportPackageDirName" value="modules/apps/sync/sync-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/web-experience/asset/asset-categories-admin-web" />
@@ -101,8 +94,6 @@
 			<property name="allowedExportPackageDirName" value="modules/apps/web-experience/portlet-display-template/portlet-display-template" />
 			<property name="allowedExportPackageDirName" value="modules/apps/web-experience/product-navigation/product-navigation-product-menu-web" />
 			<property name="allowedExportPackageDirName" value="modules/apps/web-experience/rss/rss-util" />
-			<property name="allowedExportPackageDirName" value="modules/apps/web-experience/rss/rss-web" />
-			<property name="allowedExportPackageDirName" value="modules/apps/web-experience/staging/staging-portlet-data-handler" />
 		</check>
 		<check name="BNDIncludeResourceCheck" />
 		<check name="BNDWebContextPathCheck" />
@@ -143,7 +134,18 @@
 	</source-processor>
 	<source-processor name="GradleSourceProcessor">
 		<check name="GradleBlockOrderCheck" />
+		<check name="GradleBodyCheck" />
 		<check name="GradleDependenciesCheck" />
+		<check name="GradleExportedPackageDependenciesCheck">
+			<property name="exportPackageBundleSymbolicNamePrefix" value="com.liferay.arquillian." />
+			<property name="exportPackageBundleSymbolicNamePrefix" value="com.liferay.frontend." />
+			<property name="exportPackageBundleSymbolicNamePrefix" value="com.liferay.gradle." />
+			<property name="exportPackageBundleSymbolicNamePrefix" value="com.liferay.portal." />
+			<property name="exportPackageBundleSymbolicNamePrefix" value="com.liferay.project." />
+			<property name="exportPackageBundleSymbolicNamePrefix" value="com.liferay.util." />
+			<property name="exportPackageBundleSymbolicNamePrefix" value="com.liferay.webjars." />
+			<property name="exportPackageBundleSymbolicNamePrefix" value="com.liferay.whip" />
+		</check>
 		<check name="GradleImportsCheck" />
 		<check name="GradleIndentationCheck" />
 		<check name="GradlePropertiesCheck" />
@@ -179,6 +181,7 @@
 		<check name="JavaDeprecatedJavadocCheck" />
 		<check name="JavaDiamondOperatorCheck" />
 		<check name="JavaDeserializationSecurityCheck" />
+		<check name="JavaEmptyLineAfterSuperCallCheck" />
 		<check name="JavaEmptyLinesCheck" />
 		<check name="JavaExceptionCheck" />
 		<check name="JavaForLoopCheck" />
@@ -192,7 +195,32 @@
 		<check name="JavaLineBreakCheck" />
 		<check name="JavaLocalSensitiveComparisonCheck" />
 		<check name="JavaLongLinesCheck" />
-		<check name="JavaPackagePathCheck" />
+		<check name="JavaMetaOCDIdCheck" />
+		<check name="JavaPackagePathCheck">
+			<property name="allowedInternalPackageDirName" value="modules/apps/adaptive-media/adaptive-media-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/collaboration/blogs/blogs-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/collaboration/comment/comment-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/collaboration/item-selector/item-selector-criteria-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/collaboration/wiki/wiki-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/captcha/captcha-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/organizations/organizations-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/portal-mobile-device-recognition/portal-mobile-device-recognition-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/portal-scripting/portal-scripting-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/portal-security-audit/portal-security-audit-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/roles/roles-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/user-groups-admin/user-groups-admin-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/users-admin/users-admin-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/users-admin/users-admin-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/knowledge-base/knowledge-base-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/journal/journal-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/layout/layout-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/portlet-configuration/portlet-configuration-icon-locator-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/portlet-configuration/portlet-configuration-toolbar-contributor-locator-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/site-navigation/site-navigation-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/site/site-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/site/site-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/core/registry-api" />
+		</check>
 		<check name="JavaParameterAnnotationsCheck" />
 		<check name="JavaProcessCallableCheck" />
 		<check name="JavaRedundantConstructorCheck" />
@@ -248,6 +276,7 @@
 
 		<!-- Portal checks -->
 
+		<check name="JavaCleanUpMethodSuperCleanUpCheck" />
 		<check name="JavaCleanUpMethodVariablesCheck" />
 		<check name="JavaFinderCacheCheck" />
 		<check name="JavaFinderImplCustomSQLCheck" />
@@ -351,8 +380,10 @@
 		<check name="WhitespaceCheck" />
 	</source-processor>
 	<source-processor name="PropertiesSourceProcessor">
+		<check name="PropertiesCommentsCheck" />
 		<check name="PropertiesDefinitionKeysCheck" />
 		<check name="PropertiesDependenciesFileCheck" />
+		<check name="PropertiesImportedFilesContentCheck" />
 		<check name="PropertiesLanguageKeysCheck" />
 		<check name="PropertiesLiferayPluginPackageFileCheck" />
 		<check name="PropertiesLongLinesCheck" />
@@ -369,6 +400,7 @@
 		<check name="PropertiesServiceKeysCheck" />
 	</source-processor>
 	<source-processor name="SoySourceProcessor">
+		<check name="SoyEmptyLinesCheck" />
 		<check name="WhitespaceCheck" />
 	</source-processor>
 	<source-processor name="SQLSourceProcessor">

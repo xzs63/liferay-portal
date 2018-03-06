@@ -14,10 +14,10 @@
 
 package com.liferay.dynamic.data.mapping.form.web.internal.display.context;
 
+import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
-import com.liferay.dynamic.data.mapping.form.web.internal.constants.DDMFormPortletKeys;
 import com.liferay.dynamic.data.mapping.form.web.internal.constants.DDMFormWebKeys;
 import com.liferay.dynamic.data.mapping.form.web.internal.display.context.util.DDMFormAdminRequestHelper;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
@@ -41,6 +41,7 @@ import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.portlet.RenderRequest;
 
@@ -94,7 +95,7 @@ public class DDMFormViewFormInstanceRecordDisplayContext {
 			formInstanceRecord.getDDMFormValues(), formValues);
 
 		DDMFormRenderingContext formRenderingContext =
-			createDDMFormRenderingContext();
+			createDDMFormRenderingContext(structure.getDDMForm());
 
 		formRenderingContext.setDDMFormValues(formValues);
 
@@ -106,17 +107,29 @@ public class DDMFormViewFormInstanceRecordDisplayContext {
 			currentForm, formLayout, formRenderingContext);
 	}
 
-	protected DDMFormRenderingContext createDDMFormRenderingContext() {
+	protected DDMFormRenderingContext createDDMFormRenderingContext(
+		DDMForm ddmForm) {
+
 		DDMFormRenderingContext formRenderingContext =
 			new DDMFormRenderingContext();
 
 		formRenderingContext.setHttpServletRequest(
 			_ddmFormAdminRequestHelper.getRequest());
 		formRenderingContext.setHttpServletResponse(_httpServletResponse);
-		formRenderingContext.setLocale(_ddmFormAdminRequestHelper.getLocale());
+
+		Set<Locale> availableLocales = ddmForm.getAvailableLocales();
+
+		Locale locale = ddmForm.getDefaultLocale();
+
+		if (availableLocales.contains(_ddmFormAdminRequestHelper.getLocale())) {
+			locale = _ddmFormAdminRequestHelper.getLocale();
+		}
+
+		formRenderingContext.setLocale(locale);
+
 		formRenderingContext.setPortletNamespace(
 			PortalUtil.getPortletNamespace(
-				DDMFormPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN));
+				DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN));
 		formRenderingContext.setReadOnly(true);
 
 		return formRenderingContext;

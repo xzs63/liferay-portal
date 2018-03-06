@@ -22,8 +22,8 @@ import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.users.admin.web.constants.UserFormConstants;
-import com.liferay.users.admin.web.constants.UsersAdminWebKeys;
+import com.liferay.users.admin.constants.UserFormConstants;
+import com.liferay.users.admin.web.internal.constants.UsersAdminWebKeys;
 
 import java.io.IOException;
 
@@ -73,6 +73,8 @@ public abstract class BaseUserScreenNavigationEntry
 			UsersAdminWebKeys.ACTION_COMMAND_NAME, getActionCommandName());
 		request.setAttribute(
 			UsersAdminWebKeys.EDITABLE, isEditable(request, response));
+		request.setAttribute(
+			UsersAdminWebKeys.FORM_LABEL, getLabel(request.getLocale()));
 		request.setAttribute(UsersAdminWebKeys.JSP_PATH, getJspPath());
 
 		jspRenderer.renderJSP(request, response, "/edit_user_navigation.jsp");

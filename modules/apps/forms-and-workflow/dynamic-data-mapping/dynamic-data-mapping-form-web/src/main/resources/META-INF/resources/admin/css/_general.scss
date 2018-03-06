@@ -38,25 +38,25 @@
 .ddm-form-settings-modal {
 	.ddm-form-settings-modal-content {
 		.modal-body {
-			padding: 0px;
+			padding: 0;
 		}
 	}
 
-	.ddm-record-set-settings {
-		padding: 0px;
+	.ddm-form-instance-settings {
+		padding: 0;
 
 		.lfr-ddm-form-page {
 			.row {
-				margin-left: 0px;
-				margin-right: 0px;
-				padding: 0px;
+				margin-left: 0;
+				margin-right: 0;
+				padding: 0;
 			}
 		}
 	}
 
 	.navbar-nav {
 		float: none;
-		margin-right: 0px;
+		margin-right: 0;
 	}
 }
 
@@ -113,7 +113,12 @@
 
 .form-builder-page-manager-popover-header {
 	.popover-content {
-		padding: 7px 21px;
+		left: -16px;
+		padding: 0;
+		position: absolute;
+		top: 30px;
+		transform: translate3d(-208px, 32px, 0);
+		will-change: transform;
 	}
 
 	li {
@@ -123,7 +128,7 @@
 		font-weight: normal;
 		line-height: 16px;
 		list-style-type: none;
-		padding: 11px 0;
+		padding: 5px 0;
 	}
 
 	ul {
@@ -151,18 +156,10 @@
 
 .form-builder-sidebar,
 .portlet-forms {
-	.form-control {
-		font-size: 14px;
-	}
-
-	@include sm {
-		.form-control {
-			font-size: 16px;
-		}
-	}
-
-	.help-block {
-		font-size: 14px;
+	.form-group .alloy-editor-container.input-group .alloy-editor-placeholder.ae-placeholder {
+		border-left: 0;
+		padding-left: 0;
+		width: inherit;
 	}
 
 	.icon-asterisk {
@@ -287,6 +284,10 @@
 			position: relative;
 		}
 
+		.hide {
+			display: none;
+		}
+
 		.liferay-ddm-form-field-text textarea {
 			resize: none;
 		}
@@ -299,11 +300,11 @@
 	.form-builder-tabview,
 	.lfr-ddm-form-wizard {
 		border-bottom: 1px solid #DEE4E9;
-		padding: 20px 34px 11px 34px;
+		padding: 20px 34px 11px;
 		position: relative;
 	}
 
-	.record-set-id, .record-set-modified-date {
+	.form-instance-id, .form-instance-modified-date {
 		margin-right: 20px;
 	}
 }

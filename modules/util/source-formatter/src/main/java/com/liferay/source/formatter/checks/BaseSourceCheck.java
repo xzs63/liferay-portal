@@ -15,16 +15,17 @@
 package com.liferay.source.formatter.checks;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.source.formatter.SourceFormatterExcludes;
 import com.liferay.source.formatter.SourceFormatterMessage;
 import com.liferay.source.formatter.checks.util.SourceUtil;
+import com.liferay.source.formatter.util.CheckType;
 import com.liferay.source.formatter.util.FileUtil;
 import com.liferay.source.formatter.util.SourceFormatterUtil;
 
@@ -151,9 +152,12 @@ public abstract class BaseSourceCheck implements SourceCheck {
 			sourceFormatterMessages = new TreeSet<>();
 		}
 
+		Class<?> clazz = getClass();
+
 		sourceFormatterMessages.add(
 			new SourceFormatterMessage(
-				fileName, message, markdownFileName, lineCount));
+				fileName, message, CheckType.SOURCE_CHECK,
+				clazz.getSimpleName(), markdownFileName, lineCount));
 
 		_sourceFormatterMessagesMap.put(fileName, sourceFormatterMessages);
 	}
@@ -432,6 +436,17 @@ public abstract class BaseSourceCheck implements SourceCheck {
 		}
 
 		return document;
+	}
+
+	protected File getPortalDir() {
+		File portalImplDir = SourceFormatterUtil.getFile(
+			getBaseDirName(), "portal-impl", ToolsUtil.PORTAL_MAX_DIR_LEVEL);
+
+		if (portalImplDir == null) {
+			return null;
+		}
+
+		return portalImplDir.getParentFile();
 	}
 
 	protected String getProjectPathPrefix() {

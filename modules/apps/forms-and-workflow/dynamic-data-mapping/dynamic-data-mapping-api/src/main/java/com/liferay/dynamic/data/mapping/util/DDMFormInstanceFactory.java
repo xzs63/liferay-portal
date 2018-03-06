@@ -24,6 +24,8 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -59,6 +61,9 @@ public class DDMFormInstanceFactory {
 		return clazz.cast(proxy);
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		DDMFormInstanceFactory.class);
+
 	private static class DDMFormInstanceInvocationHandler<T>
 		implements InvocationHandler {
 
@@ -67,8 +72,9 @@ public class DDMFormInstanceFactory {
 
 			_clazz = clazz;
 			_ddmFormValues = ddmFormValues;
-			_ddmFormFieldValuesMap = ddmFormValues.getDDMFormFieldValuesMap();
 			_locale = locale;
+
+			_ddmFormFieldValuesMap = ddmFormValues.getDDMFormFieldValuesMap();
 		}
 
 		@Override
@@ -183,6 +189,10 @@ public class DDMFormInstanceFactory {
 				return sb.toString();
 			}
 			catch (JSONException jsone) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("Unable to parse JSON", jsone);
+				}
+
 				return valueString;
 			}
 		}

@@ -47,7 +47,6 @@ public interface WorkflowEngine {
 	 * @deprecated As of 1.0.0, replaced by {@link
 	 *             #deployWorkflowDefinition(String, String, InputStream,
 	 *             ServiceContext)}
-	 * @review
 	 */
 	@Deprecated
 	public WorkflowDefinition deployWorkflowDefinition(
@@ -110,6 +109,14 @@ public interface WorkflowEngine {
 			OrderByComparator<WorkflowInstance> orderByComparator,
 			ServiceContext serviceContext)
 		throws WorkflowException;
+
+	public default WorkflowDefinition saveWorkflowDefinition(
+			String title, String name, byte[] bytes,
+			ServiceContext serviceContext)
+		throws WorkflowException {
+
+		throw new UnsupportedOperationException();
+	}
 
 	public List<WorkflowInstance> search(
 			Long userId, String assetClassName, String nodeName,

@@ -110,11 +110,11 @@ if (portletTitleBasedNavigation) {
 				</c:if>
 
 				<c:if test="<%= enableRSS && MBMessagePermission.contains(permissionChecker, message, ActionKeys.VIEW) %>">
-					<liferay-ui:rss
+					<liferay-rss:rss
 						delta="<%= rssDelta %>"
 						displayStyle="<%= rssDisplayStyle %>"
 						feedType="<%= rssFeedType %>"
-						url="<%= MBUtil.getRSSURL(plid, 0, message.getThreadId(), 0, themeDisplay) %>"
+						url="<%= MBRSSUtil.getRSSURL(plid, 0, message.getThreadId(), 0, themeDisplay) %>"
 					/>
 				</c:if>
 
@@ -263,7 +263,7 @@ if (portletTitleBasedNavigation) {
 
 		int[] range = treeWalker.getChildrenRange(treeWalker.getRoot());
 
-		MBMessageIterator mbMessageIterator = new MBMessageIteratorImpl(messages, range[0], range[1]);
+		MBMessageIterator mbMessageIterator = new MBMessageIterator(messages, range[0], range[1]);
 
 		while (mbMessageIterator.hasNext()) {
 			boolean messageFound = GetterUtil.getBoolean(request.getAttribute("view_thread_tree.jsp-messageFound"));
@@ -316,7 +316,7 @@ if (portletTitleBasedNavigation) {
 		String taglibReplyToMessageURL = "javascript:" + liferayPortletResponse.getNamespace() + "addReplyToMessage('" + rootMessage.getMessageId() + "', false);";
 		%>
 
-		<aui:button cssClass="btn-lg" onclick="<%= taglibReplyToMessageURL %>" primary="<%= true %>" value="reply-to-main-thread" />
+		<aui:button onclick="<%= taglibReplyToMessageURL %>" primary="<%= true %>" value="reply-to-main-thread" />
 	</c:if>
 
 	<c:if test="<%= moreMessagesPagination %>">

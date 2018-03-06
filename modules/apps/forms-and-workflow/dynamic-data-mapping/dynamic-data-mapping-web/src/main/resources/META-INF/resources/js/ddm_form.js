@@ -712,11 +712,13 @@ AUI.add(
 
 							var value;
 
-							if (Lang.isString(localizationMap)) {
-								value = localizationMap;
+							if (instance.get('localizable')) {
+								if (!A.Object.isEmpty(localizationMap)) {
+									value = localizationMap[instance.get('displayLocale')];
+								}
 							}
-							else if (!A.Object.isEmpty(localizationMap)) {
-								value = localizationMap[instance.get('displayLocale')];
+							else {
+								value = instance.getValue();
 							}
 
 							if (Lang.isUndefined(value)) {
@@ -858,19 +860,25 @@ AUI.add(
 
 						var defaultLocale = translationManager.get('defaultLocale');
 
-						var localizable = instance.get('localizable');
+						var changeableDefaultLanguage = translationManager.get('changeableDefaultLanguage');
+
+						if (changeableDefaultLanguage && availableLocales && (availableLocales.indexOf(defaultLocale) == -1)) {
+							availableLocales.push(defaultLocale);
+
+							instance.set('availableLocales', availableLocales);
+						}
 
 						var locales = [defaultLocale].concat(availableLocales);
 
-						if (localizable) {
-							if (locales.indexOf(event.prevVal) > -1) {
-								instance.updateLocalizationMap(event.prevVal);
-							}
-
-							if (locales.indexOf(event.newVal) > -1) {
-								instance.addLocaleToLocalizationMap(event.newVal);
-							}
+						if (locales.indexOf(event.prevVal) > -1) {
+							instance.updateLocalizationMap(event.prevVal);
 						}
+
+						if (locales.indexOf(event.newVal) > -1) {
+							instance.addLocaleToLocalizationMap(event.newVal);
+						}
+
+						var localizable = instance.get('localizable');
 
 						instance.set('displayLocale', event.newVal);
 						instance.set('readOnly', defaultLocale !== event.newVal && !localizable);
@@ -1512,11 +1520,13 @@ AUI.add(
 
 							var layoutValue = instance.getParsedValue(instance.getValue());
 
+							var retVal = null;
+
 							if (layoutValue.layoutId) {
-								return layoutValue;
+								retVal = layoutValue;
 							}
 
-							return null;
+							return retVal;
 						}
 					},
 
@@ -1739,7 +1749,7 @@ AUI.add(
 								toolbars: {
 									footer: [
 										{
-											cssClass: 'btn-lg btn-primary',
+											cssClass: 'btn-primary',
 											disabled: !instance.get('selectedLayout'),
 											label: Liferay.Language.get('select'),
 											on: {
@@ -1747,7 +1757,7 @@ AUI.add(
 											}
 										},
 										{
-											cssClass: 'btn-lg btn-link',
+											cssClass: 'btn-link',
 											label: Liferay.Language.get('cancel'),
 											on: {
 												click: A.bind(instance._handleCancelButtonClick, instance)
@@ -1962,7 +1972,9 @@ AUI.add(
 								start = end;
 								end = start + delta;
 
-								if (start <= cache.total) {
+								if (start <= cache.total && start != cache.oldStart) {
+									cache.oldStart = start;
+
 									listNode.append(instance._loadingAnimationNode);
 
 									instance._requestLayouts(parentLayoutId, groupId, privateLayout, start, end, A.rbind('_renderLayoutsFragment', instance, key));
@@ -2406,6 +2418,7 @@ AUI.add(
 							cache = {
 								end: end,
 								layouts: layouts,
+								oldStart: 0,
 								path: path.slice(),
 								start: start,
 								total: total
@@ -3362,8 +3375,7 @@ AUI.add(
 
 							new A.DD.Drag(
 								A.mix(dragOptions, instance.get('dd'))
-							)
-							.plug(A.Plugin.DDProxy, proxyOptions);
+							).plug(A.Plugin.DDProxy, proxyOptions);
 						}
 					}
 				}

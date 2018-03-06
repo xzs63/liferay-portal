@@ -1604,6 +1604,7 @@ public class DDMStructureLocalServiceImpl
 		validateParentStructure(structure.getStructureId(), parentStructureId);
 		validate(nameMap, parentDDMForm, ddmForm);
 
+		structure.setUserId(userId);
 		structure.setParentStructureId(parentStructureId);
 
 		DDMStructureVersion latestStructureVersion =

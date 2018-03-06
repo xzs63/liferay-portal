@@ -24,6 +24,7 @@ import com.liferay.marketplace.bundle.BundleManager;
 import com.liferay.marketplace.exception.FileExtensionException;
 import com.liferay.marketplace.service.AppService;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.bundle.blacklist.BundleBlacklistManager;
 import com.liferay.portal.kernel.deploy.DeployManagerUtil;
 import com.liferay.portal.kernel.model.LayoutTemplate;
@@ -52,7 +53,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -420,8 +420,6 @@ public class MarketplaceAppManagerPortlet extends MVCPortlet {
 		int responseCode = HttpServletResponse.SC_OK;
 
 		try {
-			String fileName = null;
-
 			Http.Options options = new Http.Options();
 
 			options.setFollowRedirects(false);
@@ -440,7 +438,9 @@ public class MarketplaceAppManagerPortlet extends MVCPortlet {
 				String deployDir = PropsUtil.get(
 					PropsKeys.AUTO_DEPLOY_DEPLOY_DIR);
 
-				String destination = deployDir + StringPool.SLASH + fileName;
+				String destination =
+					deployDir + StringPool.SLASH +
+						url.substring(url.lastIndexOf(CharPool.SLASH) + 1);
 
 				File destinationFile = new File(destination);
 

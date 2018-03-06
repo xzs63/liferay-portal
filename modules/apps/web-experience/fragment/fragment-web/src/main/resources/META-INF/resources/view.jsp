@@ -20,27 +20,10 @@
 renderResponse.setTitle(LanguageUtil.get(request, "fragments"));
 %>
 
-<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
-	<portlet:renderURL var="mainURL" />
-
-	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item href="<%= mainURL.toString() %>" label="collections" selected="<%= true %>" />
-	</aui:nav>
-
-	<c:if test="<%= fragmentDisplayContext.isShowFragmentCollectionsSearch() %>">
-		<portlet:renderURL var="portletURL">
-			<portlet:param name="mvcRenderCommandName" value="/fragment/view" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
-			<portlet:param name="displayStyle" value="<%= fragmentDisplayContext.getDisplayStyle() %>" />
-		</portlet:renderURL>
-
-		<aui:nav-bar-search>
-			<aui:form action="<%= portletURL.toString() %>" method="post" name="fm1">
-				<liferay-ui:input-search markupView="lexicon" />
-			</aui:form>
-		</aui:nav-bar-search>
-	</c:if>
-</aui:nav-bar>
+<clay:navigation-bar
+	inverted="<%= true %>"
+	items="<%= fragmentDisplayContext.getFragmentCollectionNavigationItems() %>"
+/>
 
 <liferay-frontend:management-bar
 	disabled="<%= fragmentDisplayContext.isDisabledFragmentCollectionsManagementBar() %>"
@@ -53,6 +36,16 @@ renderResponse.setTitle(LanguageUtil.get(request, "fragments"));
 			portletURL="<%= currentURLObj %>"
 			selectedDisplayStyle="<%= fragmentDisplayContext.getDisplayStyle() %>"
 		/>
+
+		<c:if test="<%= fragmentDisplayContext.isShowAddButton(FragmentActionKeys.ADD_FRAGMENT_COLLECTION) %>">
+			<portlet:renderURL var="addFragmentCollectionURL">
+				<portlet:param name="mvcRenderCommandName" value="/fragment/edit_fragment_collection" />
+			</portlet:renderURL>
+
+			<liferay-frontend:add-menu inline="<%= true %>">
+				<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add-collection") %>' url="<%= addFragmentCollectionURL.toString() %>" />
+			</liferay-frontend:add-menu>
+		</c:if>
 	</liferay-frontend:management-bar-buttons>
 
 	<liferay-frontend:management-bar-filters>
@@ -67,6 +60,20 @@ renderResponse.setTitle(LanguageUtil.get(request, "fragments"));
 			orderColumns="<%= fragmentDisplayContext.getOrderColumns() %>"
 			portletURL="<%= currentURLObj %>"
 		/>
+
+		<c:if test="<%= fragmentDisplayContext.isShowFragmentCollectionsSearch() %>">
+			<portlet:renderURL var="portletURL">
+				<portlet:param name="mvcRenderCommandName" value="/fragment/view" />
+				<portlet:param name="redirect" value="<%= currentURL %>" />
+				<portlet:param name="displayStyle" value="<%= fragmentDisplayContext.getDisplayStyle() %>" />
+			</portlet:renderURL>
+
+			<li>
+				<aui:form action="<%= portletURL.toString() %>" method="post" name="fm1">
+					<liferay-ui:input-search markupView="lexicon" />
+				</aui:form>
+			</li>
+		</c:if>
 	</liferay-frontend:management-bar-filters>
 
 	<liferay-frontend:management-bar-action-buttons>
@@ -118,16 +125,6 @@ renderResponse.setTitle(LanguageUtil.get(request, "fragments"));
 		<liferay-ui:search-iterator displayStyle="<%= fragmentDisplayContext.getDisplayStyle() %>" markupView="lexicon" />
 	</liferay-ui:search-container>
 </aui:form>
-
-<c:if test="<%= fragmentDisplayContext.isShowAddButton(FragmentActionKeys.ADD_FRAGMENT_COLLECTION) %>">
-	<portlet:renderURL var="addFragmentCollectionURL">
-		<portlet:param name="mvcRenderCommandName" value="/fragment/edit_fragment_collection" />
-	</portlet:renderURL>
-
-	<liferay-frontend:add-menu>
-		<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add-collection") %>' url="<%= addFragmentCollectionURL.toString() %>" />
-	</liferay-frontend:add-menu>
-</c:if>
 
 <aui:script require="metal-dom/src/all/dom as dom">
 	var deleteSelectedFragmentCollectionsHandler = dom.on(

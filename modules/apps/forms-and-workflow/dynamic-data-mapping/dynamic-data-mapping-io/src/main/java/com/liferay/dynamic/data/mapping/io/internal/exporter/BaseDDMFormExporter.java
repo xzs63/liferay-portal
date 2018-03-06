@@ -157,7 +157,7 @@ public abstract class BaseDDMFormExporter implements DDMFormExporter {
 		for (DDMStructureVersion ddmStructureVersion : ddmStructureVersions) {
 			DDMForm ddmForm = ddmStructureVersion.getDDMForm();
 
-			ddmFormFields.putAll(ddmForm.getDDMFormFieldsMap(true));
+			ddmFormFields.putAll(ddmForm.getNontransientDDMFormFieldsMap(true));
 		}
 
 		return ddmFormFields;
@@ -170,7 +170,9 @@ public abstract class BaseDDMFormExporter implements DDMFormExporter {
 		Map<String, List<DDMFormFieldValue>> ddmFormFieldValueMap =
 			ddmFormValues.getDDMFormFieldValuesMap();
 
-		Stream<DDMFormField> ddmFormFieldStream = ddmFormFields.stream().filter(
+		Stream<DDMFormField> ddmFormFieldStream = ddmFormFields.stream();
+
+		ddmFormFieldStream = ddmFormFieldStream.filter(
 			ddmFormField -> ddmFormFieldValueMap.containsKey(
 				ddmFormField.getName()));
 

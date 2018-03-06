@@ -56,6 +56,12 @@ renderResponse.setTitle((structure == null) ? LanguageUtil.get(request, "new-ele
 		/>
 	</div>
 
+	<button class="btn btn-primary lfr-ddm-add-field">
+		<svg class="lexicon-icon">
+			<use xlink:href="<%= ddmFormAdminDisplayContext.getLexiconIconsPath() %>plus" />
+		</svg>
+	</button>
+
 	<aui:form action="<%= saveStructureURL %>" cssClass="ddm-form-builder-form" method="post" name="editForm">
 		<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 		<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
@@ -64,7 +70,7 @@ renderResponse.setTitle((structure == null) ? LanguageUtil.get(request, "new-ele
 
 		<%@ include file="/admin/exceptions.jspf" %>
 
-		<aui:fieldset cssClass="ddm-form-basic-info">
+		<div class="ddm-form-basic-info">
 			<div class="container-fluid-1280">
 				<h1>
 					<liferay-ui:input-editor
@@ -94,18 +100,18 @@ renderResponse.setTitle((structure == null) ? LanguageUtil.get(request, "new-ele
 
 				<aui:input name="description" type="hidden" />
 			</div>
-		</aui:fieldset>
+		</div>
 
-		<aui:fieldset cssClass="container-fluid-1280 ddm-form-builder-app">
+		<div class="container-fluid-1280 ddm-form-builder-app">
 			<aui:input name="serializedFormBuilderContext" type="hidden" />
 
 			<div id="<portlet:namespace />formBuilder"></div>
-		</aui:fieldset>
+		</div>
 
 		<div class="container-fluid-1280">
 			<aui:button-row cssClass="ddm-form-builder-buttons">
-				<aui:button cssClass="btn-lg" id="save" type="submit" value="save" />
-				<aui:button cssClass="btn-lg" href="<%= redirect %>" name="cancelButton" type="cancel" />
+				<aui:button id="save" type="submit" value="save" />
+				<aui:button href="<%= redirect %>" name="cancelButton" type="cancel" />
 			</aui:button-row>
 		</div>
 

@@ -14,21 +14,14 @@
 
 package com.liferay.fragment.model.impl;
 
-import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.util.FragmentEntryRenderUtil;
 import com.liferay.html.preview.model.HtmlPreviewEntry;
 import com.liferay.html.preview.service.HtmlPreviewEntryLocalServiceUtil;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.sanitizer.Sanitizer;
-import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.zip.ZipWriter;
-
-import java.util.Optional;
 
 /**
  * @author Eudaldo Alonso
@@ -36,32 +29,8 @@ import java.util.Optional;
 public class FragmentEntryImpl extends FragmentEntryBaseImpl {
 
 	@Override
-	public String getContent() throws PortalException {
-		StringBundler sb = new StringBundler(7);
-
-		sb.append("<html><head><style>");
-		sb.append(getCss());
-		sb.append("</style><script>");
-		sb.append(getJs());
-		sb.append("</script></head><body>");
-
-		Optional<ServiceContext> serviceContextOptional = Optional.ofNullable(
-			ServiceContextThreadLocal.getServiceContext());
-
-		ServiceContext serviceContext = serviceContextOptional.orElse(
-			new ServiceContext());
-
-		String html = SanitizerUtil.sanitize(
-			serviceContext.getCompanyId(), serviceContext.getScopeGroupId(),
-			serviceContext.getUserId(), FragmentEntry.class.getName(),
-			getPrimaryKey(), ContentTypes.TEXT_HTML, Sanitizer.MODE_ALL,
-			getHtml(), null);
-
-		sb.append(html);
-
-		sb.append("</body></html>");
-
-		return sb.toString();
+	public String getContent() {
+		return FragmentEntryRenderUtil.renderFragmentEntry(this);
 	}
 
 	@Override
@@ -85,12 +54,20 @@ public class FragmentEntryImpl extends FragmentEntryBaseImpl {
 	public void populateZipWriter(ZipWriter zipWriter, String path)
 		throws Exception {
 
-		path = path + StringPool.SLASH + getFragmentEntryId();
+		path = path + StringPool.SLASH + getFragmentEntryKey();
 
-		zipWriter.addEntry(path + "/css.css", getCss());
-		zipWriter.addEntry(path + "/js.js", getJs());
-		zipWriter.addEntry(path + "/html.html", getHtml());
-		zipWriter.addEntry(path + "/name.txt", getName());
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		jsonObject.put("cssPath", path + "/src/index.css");
+		jsonObject.put("htmlPath", path + "/src/index.html");
+		jsonObject.put("jsPath", path + "/src/index.js");
+		jsonObject.put("name", getName());
+
+		zipWriter.addEntry(path + "/fragment.json", jsonObject.toString());
+
+		zipWriter.addEntry(path + "/src/index.css", getCss());
+		zipWriter.addEntry(path + "/src/index.js", getJs());
+		zipWriter.addEntry(path + "/src/index.html", getHtml());
 	}
 
 }

@@ -17,6 +17,7 @@ package com.liferay.portal.kernel.util;
 import com.liferay.petra.concurrent.NoticeableFuture;
 import com.liferay.petra.process.CollectorOutputProcessor;
 import com.liferay.petra.process.ProcessUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -124,7 +125,11 @@ public class ThreadUtil {
 			if (thread.getThreadGroup() != null) {
 				sb.append(StringPool.SPACE);
 				sb.append(StringPool.OPEN_PARENTHESIS);
-				sb.append(thread.getThreadGroup().getName());
+
+				ThreadGroup threadGroup = thread.getThreadGroup();
+
+				sb.append(threadGroup.getName());
+
 				sb.append(StringPool.CLOSE_PARENTHESIS);
 			}
 

@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.exportimport.content.processor.ExportImportContentProcessor;
+import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -28,7 +29,6 @@ import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
-import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.journal.configuration.JournalServiceConfiguration;
 import com.liferay.journal.internal.exportimport.creation.strategy.JournalCreationStrategy;
 import com.liferay.journal.model.JournalArticle;
@@ -269,16 +269,6 @@ public class JournalArticleStagedModelDataHandler
 		articleElement.addAttribute(
 			"article-resource-uuid", article.getArticleResourceUuid());
 
-		JournalArticle latestArticle =
-			_journalArticleLocalService.fetchLatestArticle(
-				article.getResourcePrimKey());
-
-		if ((latestArticle != null) &&
-			(latestArticle.getId() == article.getId())) {
-
-			articleElement.addAttribute("latest", String.valueOf(true));
-		}
-
 		if (article.getFolderId() !=
 				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
@@ -362,6 +352,10 @@ public class JournalArticleStagedModelDataHandler
 				}
 			}
 		}
+
+		JournalArticle latestArticle =
+			_journalArticleLocalService.fetchLatestArticle(
+				article.getResourcePrimKey());
 
 		if ((latestArticle != null) &&
 			(latestArticle.getId() == article.getId())) {
@@ -679,6 +673,13 @@ public class JournalArticleStagedModelDataHandler
 									fileEntry);
 							}
 							catch (NoSuchFileException nsfe) {
+								if (_log.isDebugEnabled()) {
+									_log.debug(
+										"Unable to import attachment for " +
+											"file entry " +
+												fileEntry.getFileEntryId(),
+										nsfe);
+								}
 							}
 						}
 						else {
@@ -741,9 +742,6 @@ public class JournalArticleStagedModelDataHandler
 			String articleResourceUuid = articleElement.attributeValue(
 				"article-resource-uuid");
 
-			boolean latest = GetterUtil.getBoolean(
-				articleElement.attributeValue("latest"));
-
 			// Used when importing LARs with journal schemas under 1.1.0
 
 			_setLegacyValues(article);
@@ -792,7 +790,7 @@ public class JournalArticleStagedModelDataHandler
 						reviewDateHour, reviewDateMinute, neverReview,
 						article.isIndexable(), article.isSmallImage(),
 						article.getSmallImageURL(), smallFile, null, articleURL,
-						latest, serviceContext);
+						serviceContext);
 				}
 				else {
 					importedArticle = _journalArticleLocalService.updateArticle(
@@ -809,7 +807,7 @@ public class JournalArticleStagedModelDataHandler
 						reviewDateHour, reviewDateMinute, neverReview,
 						article.isIndexable(), article.isSmallImage(),
 						article.getSmallImageURL(), smallFile, null, articleURL,
-						latest, serviceContext);
+						serviceContext);
 
 					String articleUuid = article.getUuid();
 					String importedArticleUuid = importedArticle.getUuid();
@@ -838,6 +836,14 @@ public class JournalArticleStagedModelDataHandler
 					article.isIndexable(), article.isSmallImage(),
 					article.getSmallImageURL(), smallFile, null, articleURL,
 					serviceContext);
+			}
+
+			// Clean up initial publication
+
+			if (ExportImportThreadLocal.isInitialLayoutStagingInProcess() &&
+				(article.getStatus() == WorkflowConstants.STATUS_DRAFT)) {
+
+				_journalArticleLocalService.deleteArticle(article);
 			}
 
 			boolean exportVersionHistory =
@@ -910,18 +916,18 @@ public class JournalArticleStagedModelDataHandler
 
 		JournalArticle existingArticle = null;
 
-		if (!preloaded) {
-			JournalArticleResource journalArticleResource =
-				_journalArticleResourceLocalService.
-					fetchJournalArticleResourceByUuidAndGroupId(
-						articleResourceUuid, groupId);
+		JournalArticleResource journalArticleResource =
+			_journalArticleResourceLocalService.
+				fetchJournalArticleResourceByUuidAndGroupId(
+					articleResourceUuid, groupId);
 
-			if (journalArticleResource == null) {
-				return null;
-			}
-
+		if (journalArticleResource != null) {
 			return _journalArticleLocalService.fetchLatestArticle(
 				journalArticleResource.getResourcePrimKey());
+		}
+
+		if (!preloaded) {
+			return null;
 		}
 
 		if (Validator.isNotNull(newArticleId)) {

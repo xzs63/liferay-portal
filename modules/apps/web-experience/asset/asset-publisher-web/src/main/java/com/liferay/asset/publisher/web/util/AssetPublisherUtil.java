@@ -28,15 +28,16 @@ import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetEntryService;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
+import com.liferay.asset.publisher.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.configuration.AssetPublisherPortletInstanceConfiguration;
 import com.liferay.asset.publisher.web.configuration.AssetPublisherWebConfiguration;
-import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.display.context.AssetEntryResult;
 import com.liferay.asset.publisher.web.display.context.AssetPublisherDisplayContext;
 import com.liferay.asset.util.AssetEntryQueryProcessor;
 import com.liferay.asset.util.AssetHelper;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -85,7 +86,6 @@ import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PrimitiveLongList;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -386,7 +386,7 @@ public class AssetPublisherUtil {
 			long scopeGroupId, int max, boolean checkPermission)
 		throws PortalException {
 
-		return null;
+		return Collections.emptyList();
 	}
 
 	public static List<AssetEntry> getAssetEntries(
@@ -443,14 +443,18 @@ public class AssetPublisherUtil {
 				AssetRendererFactoryRegistryUtil.
 					getAssetRendererFactoryByClassName(assetEntryType);
 
-			String portletId = assetRendererFactory.getPortletId();
+			String portletId = null;
+
+			if (assetRendererFactory != null) {
+				portletId = assetRendererFactory.getPortletId();
+			}
 
 			AssetEntry assetEntry = null;
 
 			for (long groupId : groupIds) {
 				Group group = _groupLocalService.fetchGroup(groupId);
 
-				if (group.isStagingGroup() &&
+				if ((portletId != null) && group.isStagingGroup() &&
 					!group.isStagedPortlet(portletId)) {
 
 					groupId = group.getLiveGroupId();
@@ -480,6 +484,16 @@ public class AssetPublisherUtil {
 				AssetRendererFactoryRegistryUtil.
 					getAssetRendererFactoryByClassName(
 						assetEntry.getClassName());
+
+			if (assetRendererFactory == null) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"No asset renderer factory associated with " +
+							assetEntry.getClassName());
+				}
+
+				continue;
+			}
 
 			AssetRenderer<?> assetRenderer =
 				assetRendererFactory.getAssetRenderer(

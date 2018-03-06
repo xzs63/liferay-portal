@@ -23,21 +23,19 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.test.util.lar.BaseWorkflowedStagedModelDataHandlerTestCase;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.StagedModel;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.test.rule.Sync;
-import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -60,16 +58,13 @@ import org.junit.runner.RunWith;
  * @author Alejandro Tardín
  */
 @RunWith(Arquillian.class)
-@Sync
 public class AMBlogsEntryStagedModelDataHandlerTest
 	extends BaseWorkflowedStagedModelDataHandlerTestCase {
 
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(),
-			SynchronousDestinationTestRule.INSTANCE);
+		new LiferayIntegrationTestRule();
 
 	@Before
 	@Override
@@ -84,20 +79,6 @@ public class AMBlogsEntryStagedModelDataHandlerTest
 		_amImageConfigurationHelper.addAMImageConfigurationEntry(
 			stagingGroup.getCompanyId(), StringUtil.randomString(),
 			StringUtil.randomString(), StringUtil.randomString(), properties);
-	}
-
-	@Test(expected = Exception.class)
-	public void testExportFailsWithInvalidReferences() throws Exception {
-		int invalidFileEntryId = 9999999;
-
-		String content = _getImgTag(invalidFileEntryId);
-
-		BlogsEntry blogsEntry = _addBlogsEntry(content, _getServiceContext());
-
-		initExport();
-
-		StagedModelDataHandlerUtil.exportStagedModel(
-			portletDataContext, blogsEntry);
 	}
 
 	@Test
@@ -159,6 +140,20 @@ public class AMBlogsEntryStagedModelDataHandlerTest
 
 		Assert.assertEquals(
 			blogsEntry.getContent(), importedEntry.getContent());
+	}
+
+	@Test
+	public void testExportSucceedsWithInvalidReferences() throws Exception {
+		int invalidFileEntryId = 9999999;
+
+		String content = _getImgTag(invalidFileEntryId);
+
+		BlogsEntry blogsEntry = _addBlogsEntry(content, _getServiceContext());
+
+		initExport();
+
+		StagedModelDataHandlerUtil.exportStagedModel(
+			portletDataContext, blogsEntry);
 	}
 
 	@Override

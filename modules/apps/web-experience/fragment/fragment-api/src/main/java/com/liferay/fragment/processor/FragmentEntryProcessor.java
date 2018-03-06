@@ -14,12 +14,17 @@
 
 package com.liferay.fragment.processor;
 
+import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.portal.kernel.exception.PortalException;
 
 /**
  * @author Pavel Savinov
  */
 public interface FragmentEntryProcessor {
+
+	public String processFragmentEntryLinkHTML(
+			FragmentEntryLink fragmentEntryLink, String html)
+		throws PortalException;
 
 	public void validateFragmentEntryHTML(String html) throws PortalException;
 

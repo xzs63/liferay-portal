@@ -14,14 +14,8 @@
 
 package com.liferay.layout.admin.web.internal.display.context;
 
-import com.liferay.fragment.model.FragmentCollection;
-import com.liferay.fragment.model.FragmentEntry;
-import com.liferay.fragment.model.FragmentEntryInstanceLink;
-import com.liferay.fragment.service.FragmentCollectionServiceUtil;
-import com.liferay.fragment.service.FragmentEntryInstanceLinkLocalServiceUtil;
-import com.liferay.fragment.service.FragmentEntryServiceUtil;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
-import com.liferay.layout.admin.web.internal.security.permission.LayoutPageTemplatePermission;
+import com.liferay.layout.admin.web.internal.security.permission.resource.LayoutPageTemplatePermission;
 import com.liferay.layout.admin.web.internal.util.LayoutPageTemplatePortletUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
@@ -31,19 +25,14 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryServiceUt
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.List;
 
@@ -59,9 +48,8 @@ import javax.servlet.http.HttpServletRequest;
 public class LayoutPageTemplateDisplayContext {
 
 	public LayoutPageTemplateDisplayContext(
-			RenderRequest renderRequest, RenderResponse renderResponse,
-			HttpServletRequest request)
-		throws PortalException {
+		RenderRequest renderRequest, RenderResponse renderResponse,
+		HttpServletRequest request) {
 
 		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
@@ -83,9 +71,7 @@ public class LayoutPageTemplateDisplayContext {
 		return _displayStyle;
 	}
 
-	public String getEditLayoutPageTemplateEntryRedirect()
-		throws PortalException {
-
+	public String getEditLayoutPageTemplateEntryRedirect() {
 		PortletURL portletURL = _renderResponse.createRenderURL();
 
 		portletURL.setParameter(
@@ -99,102 +85,6 @@ public class LayoutPageTemplateDisplayContext {
 		}
 
 		return portletURL.toString();
-	}
-
-	public JSONArray getFragmentCollectionsJSONArray() throws PortalException {
-		JSONArray fragmentCollectionsJSONArray =
-			JSONFactoryUtil.createJSONArray();
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		List<FragmentCollection> fragmentCollections =
-			FragmentCollectionServiceUtil.getFragmentCollections(
-				themeDisplay.getScopeGroupId());
-
-		for (FragmentCollection fragmentCollection : fragmentCollections) {
-			List<FragmentEntry> fragmentEntries =
-				FragmentEntryServiceUtil.getFragmentEntries(
-					fragmentCollection.getFragmentCollectionId(),
-					WorkflowConstants.STATUS_APPROVED);
-
-			if (ListUtil.isEmpty(fragmentEntries)) {
-				continue;
-			}
-
-			JSONObject fragmentCollectionJSONObject =
-				JSONFactoryUtil.createJSONObject();
-
-			fragmentCollectionJSONObject.put(
-				"fragmentCollectionId",
-				fragmentCollection.getFragmentCollectionId());
-
-			JSONArray fragmentEntriesJSONArray =
-				JSONFactoryUtil.createJSONArray();
-
-			for (FragmentEntry fragmentEntry : fragmentEntries) {
-				JSONObject fragmentEntryJSONObject =
-					JSONFactoryUtil.createJSONObject();
-
-				fragmentEntryJSONObject.put(
-					"fragmentEntryId", fragmentEntry.getFragmentEntryId());
-				fragmentEntryJSONObject.put(
-					"imagePreviewURL",
-					fragmentEntry.getImagePreviewURL(themeDisplay));
-				fragmentEntryJSONObject.put("name", fragmentEntry.getName());
-
-				fragmentEntriesJSONArray.put(fragmentEntryJSONObject);
-			}
-
-			fragmentCollectionJSONObject.put(
-				"fragmentEntries", fragmentEntriesJSONArray);
-
-			fragmentCollectionJSONObject.put(
-				"name", fragmentCollection.getName());
-
-			fragmentCollectionsJSONArray.put(fragmentCollectionJSONObject);
-		}
-
-		return fragmentCollectionsJSONArray;
-	}
-
-	public JSONArray getFragmentEntryInstanceLinksJSONArray()
-		throws PortalException {
-
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			getLayoutPageTemplateEntry();
-
-		List<FragmentEntryInstanceLink> fragmentEntryInstanceLinks =
-			FragmentEntryInstanceLinkLocalServiceUtil.
-				getFragmentEntryInstanceLinks(
-					themeDisplay.getScopeGroupId(),
-					layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
-
-		for (FragmentEntryInstanceLink fragmentEntryInstanceLink :
-				fragmentEntryInstanceLinks) {
-
-			FragmentEntry fragmentEntry =
-				FragmentEntryServiceUtil.fetchFragmentEntry(
-					fragmentEntryInstanceLink.getFragmentEntryId());
-
-			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
-
-			jsonObject.put(
-				"fragmentEntryId", fragmentEntry.getFragmentEntryId());
-			jsonObject.put(
-				"imagePreviewURL",
-				fragmentEntry.getImagePreviewURL(themeDisplay));
-			jsonObject.put("name", fragmentEntry.getName());
-
-			jsonArray.put(jsonObject);
-		}
-
-		return jsonArray;
 	}
 
 	public String getKeywords() {
@@ -233,9 +123,7 @@ public class LayoutPageTemplateDisplayContext {
 		return _layoutPageTemplateCollectionId;
 	}
 
-	public String getLayoutPageTemplateCollectionRedirect()
-		throws PortalException {
-
+	public String getLayoutPageTemplateCollectionRedirect() {
 		String redirect = ParamUtil.getString(_request, "redirect");
 
 		if (Validator.isNull(redirect)) {

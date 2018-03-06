@@ -16,15 +16,15 @@ package com.liferay.source.formatter;
 
 import com.liferay.petra.nio.CharsetDecoderUtil;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.source.formatter.checks.SourceCheck;
 import com.liferay.source.formatter.checks.configuration.SourceChecksResult;
-import com.liferay.source.formatter.checks.configuration.SourceChecksSuppressions;
 import com.liferay.source.formatter.checks.configuration.SourceFormatterConfiguration;
+import com.liferay.source.formatter.checks.configuration.SourceFormatterSuppressions;
 import com.liferay.source.formatter.checks.util.SourceChecksUtil;
 import com.liferay.source.formatter.checks.util.SourceUtil;
 import com.liferay.source.formatter.util.DebugUtil;
@@ -134,15 +134,12 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		List<String> fileNames = sourceFormatterArgs.getFileNames();
 
 		if (fileNames != null) {
-			return fileNames;
+			return SourceFormatterUtil.filterFileNames(
+				fileNames, new String[0], getIncludes(),
+				new SourceFormatterExcludes(), false);
 		}
 
 		return doGetFileNames();
-	}
-
-	@Override
-	public SourceMismatchException getFirstSourceMismatchException() {
-		return _firstSourceMismatchException;
 	}
 
 	@Override
@@ -166,6 +163,11 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		return sourceFormatterMessages;
+	}
+
+	@Override
+	public List<SourceMismatchException> getSourceMismatchExceptions() {
+		return _sourceMismatchExceptions;
 	}
 
 	@Override
@@ -204,13 +206,6 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	@Override
-	public void setSourceChecksSuppressions(
-		SourceChecksSuppressions sourceChecksSuppressions) {
-
-		_sourceChecksSuppressions = sourceChecksSuppressions;
-	}
-
-	@Override
 	public void setSourceFormatterArgs(
 		SourceFormatterArgs sourceFormatterArgs) {
 
@@ -229,6 +224,13 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		SourceFormatterExcludes sourceFormatterExcludes) {
 
 		_sourceFormatterExcludes = sourceFormatterExcludes;
+	}
+
+	@Override
+	public void setSourceFormatterSuppressions(
+		SourceFormatterSuppressions sourceFormatterSuppressions) {
+
+		_sourceFormatterSuppressions = sourceFormatterSuppressions;
 	}
 
 	@Override
@@ -273,17 +275,20 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		throws Exception {
 
 		Set<String> modifiedContents = new HashSet<>();
+		Set<String> modifiedMessages = new TreeSet<>();
 
 		String newContent = format(
 			file, fileName, absolutePath, content, content, modifiedContents,
-			0);
+			modifiedMessages, 0);
 
-		processFormattedFile(file, fileName, content, newContent);
+		processFormattedFile(
+			file, fileName, content, newContent, modifiedMessages);
 	}
 
 	protected String format(
 			File file, String fileName, String absolutePath, String content,
-			String originalContent, Set<String> modifiedContents, int count)
+			String originalContent, Set<String> modifiedContents,
+			Set<String> modifiedMessages, int count)
 		throws Exception {
 
 		_sourceFormatterMessagesMap.remove(fileName);
@@ -291,7 +296,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		_checkUTF8(file, fileName);
 
 		String newContent = _processSourceChecks(
-			file, fileName, absolutePath, content);
+			file, fileName, absolutePath, content, modifiedMessages);
 
 		if ((newContent == null) || content.equals(newContent)) {
 			return newContent;
@@ -322,7 +327,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		return format(
 			file, fileName, absolutePath, newContent, originalContent,
-			modifiedContents, count);
+			modifiedContents, modifiedMessages, count);
 	}
 
 	protected List<String> getAllFileNames() {
@@ -371,6 +376,10 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return _sourceFormatterExcludes;
 	}
 
+	protected SourceFormatterSuppressions getSourceFormatterSuppressions() {
+		return _sourceFormatterSuppressions;
+	}
+
 	protected boolean hasGeneratedTag(String content) {
 		if ((content.contains("@generated") || content.contains("$ANTLR")) &&
 			!content.contains("hasGeneratedTag")) {
@@ -392,12 +401,15 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	protected File processFormattedFile(
-			File file, String fileName, String content, String newContent)
+			File file, String fileName, String content, String newContent,
+			Set<String> modifiedMessages)
 		throws Exception {
 
 		if (!content.equals(newContent)) {
 			if (sourceFormatterArgs.isPrintErrors()) {
-				SourceFormatterUtil.printError(fileName, file);
+				for (String modifiedMessage : modifiedMessages) {
+					SourceFormatterUtil.printError(fileName, modifiedMessage);
+				}
 			}
 
 			if (sourceFormatterArgs.isAutoFix()) {
@@ -408,9 +420,9 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 					file.delete();
 				}
 			}
-			else if (_firstSourceMismatchException == null) {
-				_firstSourceMismatchException = new SourceMismatchException(
-					fileName, content, newContent);
+			else {
+				_sourceMismatchExceptions.add(
+					new SourceMismatchException(fileName, content, newContent));
 			}
 		}
 
@@ -649,14 +661,15 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	private String _processSourceChecks(
-			File file, String fileName, String absolutePath, String content)
+			File file, String fileName, String absolutePath, String content,
+			Set<String> modifiedMessages)
 		throws Exception {
 
 		SourceChecksResult sourceChecksResult =
 			SourceChecksUtil.processSourceChecks(
-				file, fileName, absolutePath, content,
+				file, fileName, absolutePath, content, modifiedMessages,
 				_isModulesFile(absolutePath), _sourceChecks,
-				_sourceChecksSuppressions,
+				_sourceFormatterSuppressions,
 				sourceFormatterArgs.isShowDebugInformation());
 
 		for (SourceFormatterMessage sourceFormatterMessage :
@@ -670,7 +683,6 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 	private List<String> _allFileNames;
 	private boolean _browserStarted;
-	private SourceMismatchException _firstSourceMismatchException;
 	private final List<String> _modifiedFileNames =
 		new CopyOnWriteArrayList<>();
 	private List<String> _pluginsInsideModulesDirectoryNames;
@@ -678,10 +690,12 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	private String _projectPathPrefix;
 	private Map<String, Properties> _propertiesMap;
 	private List<SourceCheck> _sourceChecks = new ArrayList<>();
-	private SourceChecksSuppressions _sourceChecksSuppressions;
 	private SourceFormatterConfiguration _sourceFormatterConfiguration;
 	private SourceFormatterExcludes _sourceFormatterExcludes;
 	private Map<String, Set<SourceFormatterMessage>>
 		_sourceFormatterMessagesMap = new ConcurrentHashMap<>();
+	private SourceFormatterSuppressions _sourceFormatterSuppressions;
+	private final List<SourceMismatchException> _sourceMismatchExceptions =
+		new ArrayList<>();
 
 }

@@ -125,7 +125,6 @@ CommentSectionDisplayContext commentSectionDisplayContext = CommentDisplayContex
 										<div class="panel-body">
 											<div class="lfr-discussion-details">
 												<liferay-ui:user-portrait
-													cssClass="user-icon-lg"
 													user="<%= user %>"
 												/>
 											</div>
@@ -136,7 +135,7 @@ CommentSectionDisplayContext commentSectionDisplayContext = CommentDisplayContex
 												<aui:input name="postReplyBody0" type="hidden" />
 
 												<aui:button-row>
-													<aui:button cssClass="btn-comment btn-lg btn-primary" disabled="<%= true %>" id='<%= randomNamespace + "postReplyButton0" %>' onClick='<%= randomNamespace + "postReply(0);" %>' value='<%= themeDisplay.isSignedIn() ? "reply" : "reply-as" %>' />
+													<aui:button cssClass="btn-comment btn-primary" disabled="<%= true %>" id='<%= randomNamespace + "postReplyButton0" %>' onClick='<%= randomNamespace + "postReply(0);" %>' value='<%= themeDisplay.isSignedIn() ? "reply" : "reply-as" %>' />
 												</aui:button-row>
 											</div>
 										</div>
@@ -309,6 +308,16 @@ CommentSectionDisplayContext commentSectionDisplayContext = CommentDisplayContex
 									}
 								}
 							);
+						}
+					);
+
+					Liferay.fire(
+						'messagePosted',
+						{
+							className: '<%= discussionTaglibHelper.getClassName() %>',
+							classPK: '<%= discussionTaglibHelper.getClassPK() %>',
+							commentId: response.commentId,
+							text: AUI.$('input[name^="<%= namespace %>body"]').val()
 						}
 					);
 

@@ -14,7 +14,9 @@
 
 package com.liferay.source.formatter.checkstyle.checks;
 
+import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
 
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
@@ -25,7 +27,6 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Hugo Huijser
@@ -69,24 +70,64 @@ public class ChainingCheck extends BaseCheck {
 				}
 			}
 
-			List<String> chainedMethodNames = _getChainedMethodNames(
-				methodCallAST);
-
-			if (chainedMethodNames.size() == 1) {
+			if (_isInsideAnonymousClassVariableDefinition(methodCallAST)) {
 				continue;
 			}
 
-			_checkMethodName(
-				chainedMethodNames, "getClass", methodCallAST, detailAST);
+			List<String> chainedMethodNames = _getChainedMethodNames(
+				methodCallAST);
 
-			if (chainedMethodNames.size() == 2) {
+			int chainSize = chainedMethodNames.size();
+
+			if (chainSize == 1) {
 				continue;
+			}
+
+			if (chainSize == 2) {
+				if (dotAST == null) {
+					continue;
+				}
+
+				_checkMethodName(
+					chainedMethodNames, "getClass", methodCallAST, detailAST);
+
+				String methodName1 = chainedMethodNames.get(0);
+
+				if ((methodName1.equals("getParamValue") ||
+					 methodName1.equals("getValue")) &&
+					DetailASTUtil.hasParentWithTokenType(
+						detailAST, TokenTypes.ENUM_DEF)) {
+
+					continue;
+				}
+
+				String methodName2 = chainedMethodNames.get(1);
+
+				if (methodName1.equals("concat") ||
+					methodName2.equals("concat")) {
+
+					continue;
+				}
+
+				FileContents fileContents = getFileContents();
+
+				String fileName = StringUtil.replace(
+					fileContents.getFileName(), CharPool.BACK_SLASH,
+					CharPool.SLASH);
+
+				if (fileName.contains("/test/") ||
+					fileName.contains("/testIntegration/")) {
+
+					continue;
+				}
 			}
 
 			if (_isAllowedChainingMethodCall(
 					detailAST, methodCallAST, chainedMethodNames)) {
 
-				_checkStyling(methodCallAST);
+				if (chainSize > 2) {
+					_checkStyling(methodCallAST);
+				}
 
 				continue;
 			}
@@ -100,7 +141,7 @@ public class ChainingCheck extends BaseCheck {
 				continue;
 			}
 
-			if ((chainedMethodNames.size() == 3) && (concatsCount == 2)) {
+			if ((chainSize == 3) && (concatsCount == 2)) {
 				continue;
 			}
 
@@ -163,6 +204,60 @@ public class ChainingCheck extends BaseCheck {
 		}
 	}
 
+	private DetailAST _getOuterMethodCallAST(DetailAST detailAST) {
+		while (true) {
+			if ((detailAST.getType() != TokenTypes.DOT) &&
+				(detailAST.getType() != TokenTypes.METHOD_CALL)) {
+
+				return null;
+			}
+
+			DetailAST parentAST = detailAST.getParent();
+
+			if ((detailAST.getType() == TokenTypes.METHOD_CALL) &&
+				(parentAST.getType() != TokenTypes.DOT)) {
+
+				break;
+			}
+
+			detailAST = parentAST;
+		}
+
+		while (true) {
+			DetailAST parentAST = detailAST.getParent();
+
+			if (parentAST == null) {
+				return null;
+			}
+
+			if (parentAST.getType() == TokenTypes.METHOD_CALL) {
+				detailAST = parentAST;
+
+				break;
+			}
+
+			detailAST = parentAST;
+		}
+
+		while (true) {
+			DetailAST childAST = detailAST.getFirstChild();
+
+			if ((detailAST.getType() != TokenTypes.DOT) &&
+				(detailAST.getType() != TokenTypes.METHOD_CALL)) {
+
+				return null;
+			}
+
+			if ((detailAST.getType() == TokenTypes.DOT) &&
+				(childAST.getType() != TokenTypes.METHOD_CALL)) {
+
+				return detailAST.getParent();
+			}
+
+			detailAST = childAST;
+		}
+	}
+
 	private boolean _isAllowedChainingMethodCall(
 		DetailAST detailAST, DetailAST methodCallAST,
 		List<String> chainedMethodNames) {
@@ -207,23 +302,63 @@ public class ChainingCheck extends BaseCheck {
 			nameAST = dotAST.findFirstToken(TokenTypes.IDENT);
 		}
 
-		String classOrVariableName = nameAST.getText();
+		if (nameAST != null) {
+			String classOrVariableName = nameAST.getText();
 
-		for (String allowedClassName : _allowedClassNames) {
-			if (classOrVariableName.matches(allowedClassName)) {
-				return true;
-			}
-		}
-
-		Set<String> variableTypeNames = DetailASTUtil.getVariableTypeNames(
-			detailAST, classOrVariableName);
-
-		for (String variableTypeName : variableTypeNames) {
-			for (String allowedVariableTypeName : _allowedVariableTypeNames) {
-				if (variableTypeName.matches(allowedVariableTypeName)) {
+			for (String allowedClassName : _allowedClassNames) {
+				if (classOrVariableName.matches(allowedClassName)) {
 					return true;
 				}
 			}
+
+			String variableTypeName = DetailASTUtil.getVariableTypeName(
+				methodCallAST, classOrVariableName);
+
+			if (Validator.isNotNull(variableTypeName)) {
+				for (String allowedVariableTypeName :
+						_allowedVariableTypeNames) {
+
+					if (variableTypeName.matches(allowedVariableTypeName)) {
+						return true;
+					}
+				}
+			}
+		}
+
+		DetailAST outerMethodCallAST = _getOuterMethodCallAST(methodCallAST);
+
+		if (outerMethodCallAST != null) {
+			return _isAllowedChainingMethodCall(
+				detailAST, outerMethodCallAST,
+				_getChainedMethodNames(outerMethodCallAST));
+		}
+
+		return false;
+	}
+
+	private boolean _isInsideAnonymousClassVariableDefinition(
+		DetailAST detailAST) {
+
+		DetailAST parentAST = detailAST.getParent();
+
+		while (parentAST != null) {
+			if ((parentAST.getType() == TokenTypes.CTOR_DEF) ||
+				(parentAST.getType() == TokenTypes.METHOD_DEF)) {
+
+				return false;
+			}
+
+			if (parentAST.getType() == TokenTypes.VARIABLE_DEF) {
+				parentAST = parentAST.getParent();
+
+				if (parentAST.getType() == TokenTypes.OBJBLOCK) {
+					return true;
+				}
+
+				return false;
+			}
+
+			parentAST = parentAST.getParent();
 		}
 
 		return false;

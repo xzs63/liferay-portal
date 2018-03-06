@@ -14,12 +14,21 @@
 
 package com.liferay.user.associated.data.entity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author William Newbury
  */
 public interface UADEntity {
 
 	public String getUADEntityId();
+
+	public default Map<String, Object>
+		getUADEntityNonanonymizableFieldValues() {
+
+		return new HashMap<>();
+	}
 
 	public String getUADRegistryKey();
 

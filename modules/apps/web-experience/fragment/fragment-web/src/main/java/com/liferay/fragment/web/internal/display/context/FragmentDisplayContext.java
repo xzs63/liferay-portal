@@ -19,8 +19,9 @@ import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentCollectionServiceUtil;
 import com.liferay.fragment.service.FragmentEntryServiceUtil;
-import com.liferay.fragment.web.internal.security.permission.FragmentPermission;
+import com.liferay.fragment.web.internal.security.permission.resource.FragmentPermission;
 import com.liferay.fragment.web.util.FragmentPortletUtil;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -30,9 +31,11 @@ import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.portlet.PortletURL;
@@ -66,6 +69,16 @@ public class FragmentDisplayContext {
 
 		if ((fragmentEntry != null) && Validator.isNull(_cssContent)) {
 			_cssContent = fragmentEntry.getCss();
+
+			if (Validator.isNull(_cssContent)) {
+				StringBundler sb = new StringBundler(3);
+
+				sb.append(".fragment_");
+				sb.append(fragmentEntry.getFragmentEntryId());
+				sb.append(" {\n}");
+
+				_cssContent = sb.toString();
+			}
 		}
 
 		return _cssContent;
@@ -133,6 +146,25 @@ public class FragmentDisplayContext {
 			_request, "fragmentCollectionId");
 
 		return _fragmentCollectionId;
+	}
+
+	public List<NavigationItem> getFragmentCollectionNavigationItems() {
+		List<NavigationItem> navigationItems = new ArrayList<>();
+
+		NavigationItem entriesNavigationItem = new NavigationItem();
+
+		entriesNavigationItem.setActive(true);
+
+		PortletURL mainURL = _renderResponse.createRenderURL();
+
+		entriesNavigationItem.setHref(mainURL.toString());
+
+		entriesNavigationItem.setLabel(
+			LanguageUtil.get(_request, "collections"));
+
+		navigationItems.add(entriesNavigationItem);
+
+		return navigationItems;
 	}
 
 	public String getFragmentCollectionsRedirect() throws PortalException {
@@ -348,6 +380,16 @@ public class FragmentDisplayContext {
 
 		if ((fragmentEntry != null) && Validator.isNull(_htmlContent)) {
 			_htmlContent = fragmentEntry.getHtml();
+
+			if (Validator.isNull(_htmlContent)) {
+				StringBundler sb = new StringBundler(3);
+
+				sb.append("<div class=\"fragment_");
+				sb.append(fragmentEntry.getFragmentEntryId());
+				sb.append("\">\n</div>");
+
+				_htmlContent = sb.toString();
+			}
 		}
 
 		return _htmlContent;

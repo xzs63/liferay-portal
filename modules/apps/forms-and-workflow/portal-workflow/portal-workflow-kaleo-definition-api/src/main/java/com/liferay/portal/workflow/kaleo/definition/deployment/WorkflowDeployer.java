@@ -27,7 +27,6 @@ public interface WorkflowDeployer {
 	/**
 	 * @deprecated As of 1.0.0, replaced by {@link #deploy(String, String,
 	 *             Definition, ServiceContext)}
-	 * @review
 	 */
 	@Deprecated
 	public WorkflowDefinition deploy(
@@ -35,6 +34,14 @@ public interface WorkflowDeployer {
 		throws PortalException;
 
 	public default WorkflowDefinition deploy(
+			String title, String name, Definition definition,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		throw new UnsupportedOperationException();
+	}
+
+	public default WorkflowDefinition save(
 			String title, String name, Definition definition,
 			ServiceContext serviceContext)
 		throws PortalException {

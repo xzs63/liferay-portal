@@ -17,6 +17,7 @@ package com.liferay.portal.workflow.web.internal.portlet.configuration.icon;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -34,10 +35,9 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * Configuration icon to allow the deactivation of a workflow definition.
+ * Defines the icon triggering the deactivation of a workflow definition.
  *
  * @author Jeyvison Nascimento
- * @review
  */
 @Component(
 	immediate = true,
@@ -59,10 +59,12 @@ public class UnpublishDefinitionPortletConfigurationIcon
 	}
 
 	/**
-	 * Creates and returns an action URL passing the workflow definition name
-	 * and version as parameters.
+	 * Creates and returns an action URL, setting the workflow definition name
+	 * and version as URL parameters.
 	 *
-	 * @review
+	 * @param portletRequest the portlet request from which to get the workflow
+	 *        definition name and version
+	 * @param portletResponse the portlet response
 	 */
 	@Override
 	public String getURL(
@@ -76,6 +78,8 @@ public class UnpublishDefinitionPortletConfigurationIcon
 			ActionRequest.ACTION_NAME, "deactivateWorkflowDefinition");
 		portletURL.setParameter(
 			"mvcPath", portletRequest.getParameter("mvcPath"));
+		portletURL.setParameter(
+			"redirect", ParamUtil.getString(portletRequest, "redirect"));
 		portletURL.setParameter("name", portletRequest.getParameter("name"));
 		portletURL.setParameter(
 			"version", portletRequest.getParameter("version"));

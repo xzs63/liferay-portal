@@ -1,4 +1,4 @@
-<definition component-name="portal-document-management-ee">
+<definition component-name="portal-document-management-ee" ignore="true">
 	<property name="cmis.repository.type" value="sharepoint2010" />
 	<property name="custom.properties" value="session.store.password=true${line.separator}company.security.auth.type=screenName" />
 	<property name="osgi.app.includes" value="sharepoint" />
@@ -681,8 +681,8 @@
 			<var name="portlet" value="Documents and Media" />
 		</execute>
 
-		<execute macro="DMDocument#searchCP">
-			<var name="dmDocumentKeyword" value="Document_3.odt" />
+		<execute macro="Search#searchCP">
+			<var name="searchTerm" value="Document_3.odt" />
 		</execute>
 
 		<execute macro="DMDocument#viewSearchResultsCP">

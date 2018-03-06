@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.users.admin.constants.UsersAdminPortletKeys;
 import com.liferay.users.admin.kernel.util.UsersAdmin;
 import com.liferay.users.admin.kernel.util.UsersAdminUtil;
-import com.liferay.users.admin.web.constants.UserFormConstants;
 
 import java.util.Calendar;
 
@@ -104,12 +103,6 @@ public class EditUserOrganizationsMVCActionCommand
 				SessionErrors.add(actionRequest, e.getClass(), e);
 
 				actionResponse.setRenderParameter("mvcPath", "/edit_user.jsp");
-				actionResponse.setRenderParameter(
-					"screenNavigationCategoryKey",
-					UserFormConstants.CATEGORY_KEY_GENERAL);
-				actionResponse.setRenderParameter(
-					"screenNavigationEntryKey",
-					UserFormConstants.ENTRY_KEY_ORGANIZATIONS);
 			}
 			else {
 				throw e;

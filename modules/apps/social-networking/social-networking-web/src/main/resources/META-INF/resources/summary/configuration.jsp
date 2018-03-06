@@ -27,7 +27,7 @@
 	<div class="portlet-configuration-body-content">
 		<div class="container-fluid-1280">
 			<c:if test="<%= PortalUtil.isRSSFeedsEnabled() %>">
-				<liferay-ui:rss-settings
+				<liferay-rss:rss-settings
 					delta="<%= rssDelta %>"
 					displayStyle="<%= rssDisplayStyle %>"
 					enabled="<%= enableRSS %>"
@@ -38,6 +38,6 @@
 	</div>
 
 	<aui:button-row>
-		<aui:button cssClass="btn-lg" type="submit" />
+		<aui:button type="submit" />
 	</aui:button-row>
 </aui:form>

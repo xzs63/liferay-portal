@@ -16,7 +16,7 @@ package com.liferay.fragment.web.internal.portlet.util;
 
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.zip.ZipWriter;
 import com.liferay.portal.kernel.zip.ZipWriterFactoryUtil;
 
@@ -26,12 +26,15 @@ import java.util.List;
 
 import javax.portlet.PortletException;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Eudaldo Alonso
  */
+@Component(immediate = true, service = ExportUtil.class)
 public class ExportUtil {
 
-	public static File exportFragmentCollections(
+	public File exportFragmentCollections(
 			List<FragmentCollection> fragmentCollections)
 		throws PortletException {
 
@@ -39,8 +42,7 @@ public class ExportUtil {
 
 		try {
 			for (FragmentCollection fragmentCollection : fragmentCollections) {
-				fragmentCollection.populateZipWriter(
-					zipWriter, StringPool.BLANK);
+				fragmentCollection.populateZipWriter(zipWriter);
 			}
 
 			zipWriter.finish();
@@ -52,8 +54,7 @@ public class ExportUtil {
 		}
 	}
 
-	public static File exportFragmentEntries(
-			List<FragmentEntry> fragmentEntries)
+	public File exportFragmentEntries(List<FragmentEntry> fragmentEntries)
 		throws PortletException {
 
 		ZipWriter zipWriter = ZipWriterFactoryUtil.getZipWriter();

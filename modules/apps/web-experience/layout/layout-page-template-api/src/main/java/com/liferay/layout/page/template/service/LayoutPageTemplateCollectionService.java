@@ -63,7 +63,7 @@ public interface LayoutPageTemplateCollectionService extends BaseService {
 	public LayoutPageTemplateCollection deleteLayoutPageTemplateCollection(
 		long layoutPageTemplateCollectionId) throws PortalException;
 
-	public List<LayoutPageTemplateCollection> deleteLayoutPageTemplateCollections(
+	public void deleteLayoutPageTemplateCollections(
 		long[] layoutPageTemplateCollectionIds) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -73,6 +73,10 @@ public interface LayoutPageTemplateCollectionService extends BaseService {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LayoutPageTemplateCollection> getLayoutPageTemplateCollections(
 		long groupId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<LayoutPageTemplateCollection> getLayoutPageTemplateCollections(
+		long groupId, int type) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LayoutPageTemplateCollection> getLayoutPageTemplateCollections(

@@ -31,17 +31,37 @@ if (WorkflowConstants.STATUS_DRAFT == fragmentEntry.getStatus()) {
 renderResponse.setTitle(title);
 %>
 
-<aui:nav-bar markupView="lexicon">
-	<portlet:renderURL var="mainURL" />
+<div class="nav-bar-container">
+	<div class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar navbar-collapse-absolute navbar-expand-md navbar-underline navigation-bar navigation-bar-light">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<portlet:renderURL var="mainURL" />
 
-	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item href="<%= mainURL.toString() %>" label="code" selected="<%= true %>" />
-	</aui:nav>
-</aui:nav-bar>
+						<aui:a cssClass="active nav-link" href="<%= mainURL %>" label="code" />
+					</li>
+				</ul>
+			</div>
 
-<portlet:actionURL name="/fragment/edit_fragment_entry" var="editFragmentEntryURL">
-	<portlet:param name="mvcRenderCommandName" value="/fragment/edit_fragment_entry" />
-</portlet:actionURL>
+			<div class="mt-1 pull-right">
+				<c:if test="<%= WorkflowConstants.STATUS_DRAFT == fragmentEntry.getStatus() %>">
+					<button class="btn btn-default" onclick="<%= "submitForm(document.querySelector('#" + renderResponse.getNamespace() + "fm'));" %>">
+						<span class="lfr-btn-label">
+							<liferay-ui:message key="save-as-draft" />
+						</span>
+					</button>
+				</c:if>
+
+				<button class="btn btn-primary" id="<portlet:namespace />publishButton">
+					<span class="lfr-btn-label">
+						<liferay-ui:message key="publish" />
+					</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <liferay-ui:error exception="<%= FragmentEntryContentException.class %>">
 
@@ -59,27 +79,27 @@ renderResponse.setTitle(title);
 	</c:choose>
 </liferay-ui:error>
 
+<portlet:actionURL name="/fragment/edit_fragment_entry" var="editFragmentEntryURL" />
+
 <aui:form action="<%= editFragmentEntryURL %>" cssClass="container-fluid-1280" enctype="multipart/form-data" method="post" name="fm">
-	<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
+	<aui:input name="redirect" type="hidden" value="<%= fragmentDisplayContext.getEditFragmentEntryRedirect() %>" />
 	<aui:input name="fragmentEntryId" type="hidden" value="<%= fragmentDisplayContext.getFragmentEntryId() %>" />
 	<aui:input name="fragmentCollectionId" type="hidden" value="<%= fragmentDisplayContext.getFragmentCollectionId() %>" />
 	<aui:input name="cssContent" type="hidden" value="" />
 	<aui:input name="htmlContent" type="hidden" value="" />
 	<aui:input name="jsContent" type="hidden" value="" />
-	<aui:input name="status" type="hidden" value="<%= WorkflowConstants.STATUS_DRAFT %>" />
+	<aui:input name="status" type="hidden" value="<%= fragmentEntry.getStatus() %>" />
 
 	<aui:model-context bean="<%= fragmentEntry %>" model="<%= FragmentEntry.class %>" />
 
 	<aui:input autoFocus="<%= false %>" name="name" placeholder="name" type="hidden" />
 
 	<div id="<portlet:namespace />fragmentEditor"></div>
-
-	<aui:button-row cssClass="fragment-submit-buttons">
-		<aui:button cssClass="btn btn-lg" primary="<%= false %>" type="submit" value="save-as-draft" />
-
-		<aui:button cssClass="btn btn-lg" name="publishButton" type="submit" value="publish" />
-	</aui:button-row>
 </aui:form>
+
+<portlet:actionURL name="/fragment/render_fragment_entry" var="renderFragmentEntryURL">
+	<portlet:param name="fragmentEntryId" value="<%= String.valueOf(fragmentDisplayContext.getFragmentEntryId()) %>" />
+</portlet:actionURL>
 
 <aui:script require="fragment-web/js/FragmentEditor.es as FragmentEditor, metal-dom/src/all/dom as dom">
 	var cssInput = document.getElementById('<portlet:namespace />cssContent');
@@ -100,6 +120,7 @@ renderResponse.setTitle(title);
 			initialHTML: '<%= HtmlUtil.escapeJS(fragmentDisplayContext.getHtmlContent()) %>',
 			initialJS: '<%= HtmlUtil.escapeJS(fragmentDisplayContext.getJsContent()) %>',
 			namespace: '<portlet:namespace />',
+			renderFragmentEntryURL: '<%= renderFragmentEntryURL %>',
 			spritemap: '<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg'
 		},
 		wrapper

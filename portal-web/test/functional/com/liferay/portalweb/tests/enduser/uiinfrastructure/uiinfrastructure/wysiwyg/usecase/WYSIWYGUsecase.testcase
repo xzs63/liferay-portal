@@ -73,6 +73,7 @@
 
 		<execute macro="ItemSelector#selectBlogImage">
 			<var name="imageFileName" value="Document_1.jpg" />
+			<var name="navTab" value="Blog Images" />
 		</execute>
 
 		<execute macro="PortletEntry#publish" />
@@ -98,7 +99,9 @@
 
 		<execute macro="WebContentNavigator#gotoAddCP" />
 
-		<execute function="Type" locator1="TextInput#TITLE" value1="Web Content Title" />
+		<execute macro="PortletEntry#inputTitle">
+			<var name="title" value="Web Content Title" />
+		</execute>
 
 		<execute function="Click#pauseClickAt" locator1="AlloyEditor#EDITOR">
 			<var name="key_editor" value="content" />
@@ -110,6 +113,7 @@
 
 		<execute macro="ItemSelector#addFromURL">
 			<var name="imageSourceURL" value="https://raw.githubusercontent.com/liferay/liferay-portal/master/portal-web/test/functional/com/liferay/portalweb/dependencies/Document_1.jpg" />
+			<var name="navTab" value="URL" />
 		</execute>
 
 		<execute macro="PortletEntry#publish" />

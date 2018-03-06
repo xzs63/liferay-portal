@@ -22,8 +22,8 @@ import static org.hamcrest.core.Is.is;
 import com.google.gson.JsonObject;
 
 import com.liferay.apio.architect.message.json.SingleModelMessageMapper;
-import com.liferay.apio.architect.test.model.RootModel;
-import com.liferay.apio.architect.test.writer.MockSingleModelWriter;
+import com.liferay.apio.architect.test.util.model.RootModel;
+import com.liferay.apio.architect.test.util.writer.MockSingleModelWriter;
 
 import javax.ws.rs.core.HttpHeaders;
 
@@ -44,7 +44,8 @@ public class JSONLDSingleModelMessageMapperTest {
 		JsonObject jsonObject = MockSingleModelWriter.write(
 			httpHeaders, _singleModelMessageMapper);
 
-		assertThat(jsonObject, is(aRootElementJsonObjectWithId("first", true)));
+		assertThat(
+			jsonObject, is(aRootElementJsonObjectWithId("first", true, false)));
 	}
 
 	@Test

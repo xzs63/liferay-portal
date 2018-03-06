@@ -16,57 +16,27 @@ package com.liferay.frontend.taglib.clay.servlet.taglib.util;
 
 import java.io.Serializable;
 
-import java.util.List;
+import javax.portlet.PortletURL;
 
 /**
  * @author Chema Balsas
  */
 public class NavigationItem implements Serializable {
 
-	public static final String TYPE_CHECKBOX = "checkbox";
-
-	public static final String TYPE_GROUP = "group";
-
-	public static final String TYPE_RADIOGROUP = "radiogroup";
-
-	public boolean getActive() {
-		return _active;
-	}
-
-	public boolean getDisabled() {
-		return _disabled;
-	}
-
 	public String getHref() {
 		return _href;
-	}
-
-	public String getIcon() {
-		return _icon;
-	}
-
-	public String getInputName() {
-		return _inputName;
-	}
-
-	public String getInputValue() {
-		return _inputValue;
-	}
-
-	public List<NavigationItem> getItems() {
-		return _items;
 	}
 
 	public String getLabel() {
 		return _label;
 	}
 
-	public boolean getSeparator() {
-		return _separator;
+	public boolean isActive() {
+		return _active;
 	}
 
-	public String getType() {
-		return _type;
+	public boolean isDisabled() {
+		return _disabled;
 	}
 
 	public void setActive(boolean active) {
@@ -77,47 +47,35 @@ public class NavigationItem implements Serializable {
 		_disabled = disabled;
 	}
 
+	public void setHref(PortletURL portletURL, Object... parameters) {
+		if (parameters != null) {
+			if ((parameters.length % 2) != 0) {
+				throw new IllegalArgumentException(
+					"Parameters length is not an even number");
+			}
+
+			for (int i = 0; i < parameters.length; i += 2) {
+				String parameterName = String.valueOf(parameters[i]);
+				String parameterValue = String.valueOf(parameters[i + 1]);
+
+				portletURL.setParameter(parameterName, parameterValue);
+			}
+		}
+
+		_href = portletURL.toString();
+	}
+
 	public void setHref(String href) {
 		_href = href;
-	}
-
-	public void setIcon(String icon) {
-		_icon = icon;
-	}
-
-	public void setInputName(String inputName) {
-		_inputName = inputName;
-	}
-
-	public void setInputValue(String inputValue) {
-		_inputValue = inputValue;
-	}
-
-	public void setItems(List<NavigationItem> items) {
-		_items = items;
 	}
 
 	public void setLabel(String label) {
 		_label = label;
 	}
 
-	public void setSeparator(boolean separator) {
-		_separator = separator;
-	}
-
-	public void setType(String type) {
-		_type = type;
-	}
-
 	private boolean _active;
 	private boolean _disabled;
 	private String _href;
-	private String _icon;
-	private String _inputName;
-	private String _inputValue;
-	private List<NavigationItem> _items;
 	private String _label;
-	private boolean _separator;
-	private String _type;
 
 }

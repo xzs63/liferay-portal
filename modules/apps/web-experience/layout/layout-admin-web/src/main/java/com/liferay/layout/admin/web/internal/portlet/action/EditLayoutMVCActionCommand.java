@@ -135,17 +135,6 @@ public class EditLayoutMVCActionCommand extends BaseMVCActionCommand {
 			PropertiesParamUtil.getProperties(
 				actionRequest, "TypeSettingsProperties--");
 
-		String linkToLayoutUuid = ParamUtil.getString(
-			actionRequest, "linkToLayoutUuid");
-
-		if (Validator.isNotNull(linkToLayoutUuid)) {
-			Layout linkToLayout = _layoutLocalService.getLayoutByUuidAndGroupId(
-				linkToLayoutUuid, groupId, privateLayout);
-
-			formTypeSettingsProperties.put(
-				"linkToLayoutId", String.valueOf(linkToLayout.getLayoutId()));
-		}
-
 		LayoutTypePortlet layoutTypePortlet =
 			(LayoutTypePortlet)layout.getLayoutType();
 
@@ -178,13 +167,14 @@ public class EditLayoutMVCActionCommand extends BaseMVCActionCommand {
 			}
 		}
 		else {
-			layout.setTypeSettingsProperties(formTypeSettingsProperties);
+			layoutTypeSettingsProperties.putAll(formTypeSettingsProperties);
 
 			layoutTypeSettingsProperties.putAll(
 				layout.getTypeSettingsProperties());
 
 			layout = _layoutService.updateLayout(
-				groupId, privateLayout, layoutId, layout.getTypeSettings());
+				groupId, privateLayout, layoutId,
+				layoutTypeSettingsProperties.toString());
 		}
 
 		HttpServletResponse response = _portal.getHttpServletResponse(

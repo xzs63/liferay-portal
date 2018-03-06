@@ -69,12 +69,28 @@
 		<execute function="AssertElementPresent" locator1="NavBar#ACTIVE_NAV_ITEM_LINK" />
 	</command>
 
+	<command name="gotoNavNested">
+		<var name="key_navNested" value="${navNested}" />
+
+		<execute function="AssertClick#assertPartialTextClickAt" locator1="NavNested#NAV_NESTED_LINK" value1="${navNested}" />
+
+		<execute function="AssertElementPresent" locator1="NavNested#ACTIVE_NAV_NESTED_LINK" />
+	</command>
+
 	<command name="gotoNavTab">
 		<var name="key_tab" value="${navTab}" />
 
 		<execute function="AssertClick#assertPartialTextClickAt" locator1="NavTab#TAB_LINK" value1="${navTab}" />
 
 		<execute function="AssertElementPresent" locator1="NavTab#ACTIVE_TAB_LINK" />
+	</command>
+
+	<command name="gotoNavUnderline">
+		<var name="key_navUnderline" value="${navUnderline}" />
+
+		<execute function="AssertClick" locator1="NavUnderline#NAV_UNDERLINE_LINK" value1="${navUnderline}" />
+
+		<execute function="AssertElementPresent" locator1="NavUnderline#ACTIVE_NAV_UNDERLINE_LINK" />
 	</command>
 
 	<command name="gotoPage" summary="Navigate to the page named '${pageName}'">

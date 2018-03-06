@@ -129,9 +129,9 @@
 			<var name="portlet" value="Site Pages" />
 		</execute>
 
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
+		<execute macro="SitePages#gotoPageMenuItem">
 			<var name="menuItem" value="Permissions" />
-			<var name="rowEntry" value="home" />
+			<var name="pageName" value="Home" />
 		</execute>
 
 		<execute macro="Role#removePermissionPG">
@@ -140,12 +140,12 @@
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="home" />
+			<var name="pageName" value="Home" />
 			<var name="siteName" value="Site Name" />
 		</execute>
 
 		<execute macro="PermissionsInline#gotoSiteTemplateCP">
-			<var name="page" value="home" />
+			<var name="page" value="Home" />
 		</execute>
 
 		<execute macro="Role#definePermissionPG">
@@ -241,7 +241,6 @@
 
 		<execute macro="PermissionsInline#gotoConfigurationPG">
 			<var name="portletName" value="Hello World" />
-			<var name="portletOption" value="Configuration" />
 		</execute>
 
 		<execute macro="Role#removePermissionPG">
@@ -276,7 +275,6 @@
 
 		<execute macro="PermissionsInline#gotoConfigurationPG">
 			<var name="portletName" value="Hello World" />
-			<var name="portletOption" value="Configuration" />
 		</execute>
 
 		<execute macro="Role#viewPermissionPG">

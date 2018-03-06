@@ -49,6 +49,12 @@ renderResponse.setTitle((formInstance == null) ? LanguageUtil.get(request, "new-
 		</aui:nav>
 	</aui:nav-bar>
 
+	<button class="btn btn-primary lfr-ddm-add-field lfr-ddm-plus-button">
+		<svg class="lexicon-icon">
+			<use xlink:href="<%= ddmFormAdminDisplayContext.getLexiconIconsPath() %>plus" />
+		</svg>
+	</button>
+
 	<div class="autosave-bar management-bar management-bar-default">
 		<div class="container-fluid-1280">
 			<div class="toolbar">
@@ -129,11 +135,11 @@ renderResponse.setTitle((formInstance == null) ? LanguageUtil.get(request, "new-
 
 		<div class="container-fluid-1280">
 			<aui:button-row cssClass="ddm-form-builder-buttons">
-				<aui:button cssClass="btn-lg btn-primary ddm-button" id="publish" value='<%= ddmFormAdminDisplayContext.isFormPublished() ? "unpublish-form": "publish-form" %>' />
+				<aui:button cssClass="btn-primary ddm-button" id="publish" value='<%= ddmFormAdminDisplayContext.isFormPublished() ? "unpublish-form": "publish-form" %>' />
 
-				<aui:button cssClass="btn-lg ddm-button" id="save" value="save-form" />
+				<aui:button cssClass="ddm-button" id="save" value="save-form" />
 
-				<aui:button cssClass="btn-lg btn-link" id="preview" value="preview-form" />
+				<aui:button cssClass="btn-link" id="preview" value="preview-form" />
 			</aui:button-row>
 		</div>
 
@@ -224,7 +230,7 @@ renderResponse.setTitle((formInstance == null) ? LanguageUtil.get(request, "new-
 		</aui:script>
 	</aui:form>
 
-	<div class="container-fluid-1280 ddm-record-set-settings hide" id="<portlet:namespace />settings">
+	<div class="container-fluid-1280 ddm-form-instance-settings hide" id="<portlet:namespace />settings">
 		<%= request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML) %>
 	</div>
 
@@ -256,7 +262,7 @@ renderResponse.setTitle((formInstance == null) ? LanguageUtil.get(request, "new-
 						resizable: false,
 						'toolbars.footer': [
 							{
-								cssClass: 'btn-lg btn-primary',
+								cssClass: 'btn-primary',
 								label: '<liferay-ui:message key="done" />',
 								on: {
 									click: function() {
@@ -273,7 +279,7 @@ renderResponse.setTitle((formInstance == null) ? LanguageUtil.get(request, "new-
 								}
 							},
 							{
-								cssClass: 'btn-lg btn-link',
+								cssClass: 'btn-link',
 								label: '<liferay-ui:message key="cancel" />',
 								on: {
 									click: function() {

@@ -14,13 +14,12 @@
 
 package com.liferay.source.formatter;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.source.formatter.checkstyle.Checker;
 import com.liferay.source.formatter.checkstyle.util.CheckstyleUtil;
 import com.liferay.source.formatter.util.CheckType;
 import com.liferay.source.formatter.util.DebugUtil;
-import com.liferay.source.formatter.util.SourceFormatterUtil;
 
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 
@@ -69,12 +68,14 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		throws Exception {
 
 		Set<String> modifiedContents = new HashSet<>();
+		Set<String> modifiedMessages = new TreeSet<>();
 
 		String newContent = format(
 			file, fileName, absolutePath, content, content, modifiedContents,
-			0);
+			modifiedMessages, 0);
 
-		file = processFormattedFile(file, fileName, content, newContent);
+		file = processFormattedFile(
+			file, fileName, content, newContent, modifiedMessages);
 
 		_processCheckstyle(file);
 	}
@@ -135,13 +136,9 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				CheckstyleUtil.getCheckNames(configuration));
 		}
 
-		List<File> suppressionsFiles = SourceFormatterUtil.getSuppressionsFiles(
-			sourceFormatterArgs.getBaseDirName(), "checkstyle-suppressions.xml",
-			getAllFileNames(), getSourceFormatterExcludes(), portalSource,
-			subrepository);
-
 		_checker = CheckstyleUtil.getChecker(
-			configuration, suppressionsFiles, sourceFormatterArgs);
+			configuration, getSourceFormatterSuppressions(),
+			sourceFormatterArgs);
 
 		return _checker;
 	}

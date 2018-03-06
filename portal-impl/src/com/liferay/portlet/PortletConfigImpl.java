@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.portlet.PortletBag;
 import com.liferay.portal.kernel.portlet.PortletBagPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -112,6 +113,12 @@ public class PortletConfigImpl implements LiferayPortletConfig {
 			}
 		}
 
+		Set<String> keySet = containerRuntimeOptions.keySet();
+
+		keySet.retainAll(
+			SetUtil.fromEnumeration(
+				_portletContext.getContainerRuntimeOptions()));
+
 		return Collections.unmodifiableMap(containerRuntimeOptions);
 	}
 
@@ -126,12 +133,16 @@ public class PortletConfigImpl implements LiferayPortletConfig {
 			throw new IllegalArgumentException();
 		}
 
-		return _portlet.getInitParams().get(name);
+		Map<String, String> initParams = _portlet.getInitParams();
+
+		return initParams.get(name);
 	}
 
 	@Override
 	public Enumeration<String> getInitParameterNames() {
-		return Collections.enumeration(_portlet.getInitParams().keySet());
+		Map<String, String> initParams = _portlet.getInitParams();
+
+		return Collections.enumeration(initParams.keySet());
 	}
 
 	@Override

@@ -19,11 +19,10 @@ import com.liferay.announcements.kernel.service.AnnouncementsFlagLocalService;
 import com.liferay.announcements.uad.constants.AnnouncementsUADConstants;
 import com.liferay.announcements.uad.entity.AnnouncementsFlagUADEntity;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.user.associated.data.aggregator.BaseUADEntityAggregator;
 import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
 import com.liferay.user.associated.data.entity.UADEntity;
+import com.liferay.user.associated.data.util.UADDynamicQueryHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,21 +35,23 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {"model.class.name=" + AnnouncementsUADConstants.ANNOUNCEMENTS_FLAG},
+	property = {"model.class.name=" + AnnouncementsUADConstants.CLASS_NAME_ANNOUNCEMENTS_FLAG},
 	service = UADEntityAggregator.class
 )
 public class AnnouncementsFlagUADEntityAggregator
-	extends BaseUADEntityAggregator {
+	extends BaseAnnouncementsUADEntityAggregator {
 
 	@Override
-	public List<UADEntity> getUADEntities(long userId) {
-		DynamicQuery dynamicQuery =
-			_announcementsFlagLocalService.dynamicQuery();
+	public int count(long userId) {
+		return (int)_announcementsFlagLocalService.dynamicQueryCount(
+			_getDynamicQuery(userId));
+	}
 
-		dynamicQuery.add(RestrictionsFactoryUtil.eq("userId", userId));
-
+	@Override
+	public List<UADEntity> getUADEntities(long userId, int start, int end) {
 		List<AnnouncementsFlag> announcementsFlags =
-			_announcementsFlagLocalService.dynamicQuery(dynamicQuery);
+			_announcementsFlagLocalService.dynamicQuery(
+				_getDynamicQuery(userId), start, end);
 
 		List<UADEntity> uadEntities = new ArrayList<>(
 			announcementsFlags.size());
@@ -75,7 +76,17 @@ public class AnnouncementsFlagUADEntityAggregator
 			announcementsFlag.getUserId(), uadEntityId, announcementsFlag);
 	}
 
+	private DynamicQuery _getDynamicQuery(long userId) {
+		return _uadDynamicQueryHelper.addDynamicQueryCriteria(
+			_announcementsFlagLocalService.dynamicQuery(),
+			AnnouncementsUADConstants.USER_ID_FIELD_NAMES_ANNOUNCEMENTS_FLAG,
+			userId);
+	}
+
 	@Reference
 	private AnnouncementsFlagLocalService _announcementsFlagLocalService;
+
+	@Reference
+	private UADDynamicQueryHelper _uadDynamicQueryHelper;
 
 }

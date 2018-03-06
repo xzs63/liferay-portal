@@ -65,7 +65,7 @@ public class SiteNavigationMenuCacheModel implements CacheModel<SiteNavigationMe
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(19);
+		StringBundler sb = new StringBundler(21);
 
 		sb.append("{siteNavigationMenuId=");
 		sb.append(siteNavigationMenuId);
@@ -83,8 +83,10 @@ public class SiteNavigationMenuCacheModel implements CacheModel<SiteNavigationMe
 		sb.append(modifiedDate);
 		sb.append(", name=");
 		sb.append(name);
-		sb.append(", primary=");
-		sb.append(primary);
+		sb.append(", type=");
+		sb.append(type);
+		sb.append(", auto=");
+		sb.append(auto);
 		sb.append("}");
 
 		return sb.toString();
@@ -127,7 +129,8 @@ public class SiteNavigationMenuCacheModel implements CacheModel<SiteNavigationMe
 			siteNavigationMenuImpl.setName(name);
 		}
 
-		siteNavigationMenuImpl.setPrimary(primary);
+		siteNavigationMenuImpl.setType(type);
+		siteNavigationMenuImpl.setAuto(auto);
 
 		siteNavigationMenuImpl.resetOriginalValues();
 
@@ -148,7 +151,9 @@ public class SiteNavigationMenuCacheModel implements CacheModel<SiteNavigationMe
 		modifiedDate = objectInput.readLong();
 		name = objectInput.readUTF();
 
-		primary = objectInput.readBoolean();
+		type = objectInput.readInt();
+
+		auto = objectInput.readBoolean();
 	}
 
 	@Override
@@ -179,7 +184,9 @@ public class SiteNavigationMenuCacheModel implements CacheModel<SiteNavigationMe
 			objectOutput.writeUTF(name);
 		}
 
-		objectOutput.writeBoolean(primary);
+		objectOutput.writeInt(type);
+
+		objectOutput.writeBoolean(auto);
 	}
 
 	public long siteNavigationMenuId;
@@ -190,5 +197,6 @@ public class SiteNavigationMenuCacheModel implements CacheModel<SiteNavigationMe
 	public long createDate;
 	public long modifiedDate;
 	public String name;
-	public boolean primary;
+	public int type;
+	public boolean auto;
 }

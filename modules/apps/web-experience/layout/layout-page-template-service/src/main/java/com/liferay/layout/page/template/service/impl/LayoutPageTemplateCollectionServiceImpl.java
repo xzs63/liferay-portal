@@ -15,9 +15,11 @@
 package com.liferay.layout.page.template.service.impl;
 
 import com.liferay.layout.page.template.constants.LayoutPageTemplateActionKeys;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateCollectionTypeConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.service.base.LayoutPageTemplateCollectionServiceBaseImpl;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -27,9 +29,9 @@ import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermi
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermissionFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,41 +69,21 @@ public class LayoutPageTemplateCollectionServiceImpl
 	}
 
 	@Override
-	public List<LayoutPageTemplateCollection>
-			deleteLayoutPageTemplateCollections(
-				long[] layoutPageTemplateCollectionIds)
+	public void deleteLayoutPageTemplateCollections(
+			long[] layoutPageTemplateCollectionIds)
 		throws PortalException {
-
-		List<LayoutPageTemplateCollection>
-			undeletableLayoutPageTemplateCollections = new ArrayList<>();
 
 		for (long layoutPageTemplateCollectionId :
 				layoutPageTemplateCollectionIds) {
 
-			try {
-				_layoutPageTemplateCollectionModelResourcePermission.check(
-					getPermissionChecker(), layoutPageTemplateCollectionId,
-					ActionKeys.DELETE);
+			_layoutPageTemplateCollectionModelResourcePermission.check(
+				getPermissionChecker(), layoutPageTemplateCollectionId,
+				ActionKeys.DELETE);
 
-				layoutPageTemplateCollectionLocalService.
-					deleteLayoutPageTemplateCollection(
-						layoutPageTemplateCollectionId);
-			}
-			catch (PortalException pe) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(pe, pe);
-				}
-
-				LayoutPageTemplateCollection layoutPageTemplateCollection =
-					layoutPageTemplateCollectionPersistence.fetchByPrimaryKey(
-						layoutPageTemplateCollectionId);
-
-				undeletableLayoutPageTemplateCollections.add(
-					layoutPageTemplateCollection);
-			}
+			layoutPageTemplateCollectionLocalService.
+				deleteLayoutPageTemplateCollection(
+					layoutPageTemplateCollectionId);
 		}
-
-		return undeletableLayoutPageTemplateCollections;
 	}
 
 	@Override
@@ -134,6 +116,15 @@ public class LayoutPageTemplateCollectionServiceImpl
 
 	@Override
 	public List<LayoutPageTemplateCollection> getLayoutPageTemplateCollections(
+			long groupId, int type)
+		throws PortalException {
+
+		return layoutPageTemplateCollectionPersistence.filterFindByG_T(
+			groupId, type);
+	}
+
+	@Override
+	public List<LayoutPageTemplateCollection> getLayoutPageTemplateCollections(
 			long groupId, int start, int end)
 		throws PortalException {
 
@@ -146,6 +137,23 @@ public class LayoutPageTemplateCollectionServiceImpl
 			long groupId, int start, int end,
 			OrderByComparator<LayoutPageTemplateCollection> orderByComparator)
 		throws PortalException {
+
+		int count = layoutPageTemplateCollectionPersistence.countByG_T(
+			groupId,
+			LayoutPageTemplateCollectionTypeConstants.TYPE_ASSET_DISPLAY_PAGE);
+
+		if (count <= 0) {
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			layoutPageTemplateCollectionLocalService.
+				addLayoutPageTemplateCollection(
+					getUserId(), groupId, "Asset Display Pages",
+					StringPool.BLANK,
+					LayoutPageTemplateCollectionTypeConstants.
+						TYPE_ASSET_DISPLAY_PAGE,
+					serviceContext);
+		}
 
 		return layoutPageTemplateCollectionPersistence.filterFindByGroupId(
 			groupId, start, end, orderByComparator);

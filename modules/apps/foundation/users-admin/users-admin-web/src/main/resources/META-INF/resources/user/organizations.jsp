@@ -17,8 +17,6 @@
 <%@ include file="/init.jsp" %>
 
 <%
-UserDisplayContext userDisplayContext = new UserDisplayContext(request, initDisplayContext);
-
 User selUser = userDisplayContext.getSelectedUser();
 
 List<Organization> organizations = userDisplayContext.getOrganizations();
@@ -104,7 +102,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "organi
 		cssClass="modify-link"
 		id="selectOrganizationLink"
 		label="<%= true %>"
-		linkCssClass="btn btn-default btn-lg"
+		linkCssClass="btn btn-primary"
 		message="select"
 		method="get"
 		url="javascript:;"

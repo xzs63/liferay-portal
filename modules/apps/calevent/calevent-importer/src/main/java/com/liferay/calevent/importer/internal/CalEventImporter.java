@@ -42,13 +42,13 @@ import com.liferay.expando.kernel.model.ExpandoValue;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
-import com.liferay.message.boards.kernel.model.MBMessage;
-import com.liferay.message.boards.kernel.model.MBMessageConstants;
-import com.liferay.message.boards.kernel.model.MBThread;
-import com.liferay.message.boards.kernel.service.MBMessageLocalService;
-import com.liferay.message.boards.kernel.service.MBThreadLocalService;
+import com.liferay.message.boards.constants.MBMessageConstants;
 import com.liferay.message.boards.model.MBDiscussion;
+import com.liferay.message.boards.model.MBMessage;
+import com.liferay.message.boards.model.MBThread;
 import com.liferay.message.boards.service.MBDiscussionLocalService;
+import com.liferay.message.boards.service.MBMessageLocalService;
+import com.liferay.message.boards.service.MBThreadLocalService;
 import com.liferay.portal.kernel.cal.DayAndPosition;
 import com.liferay.portal.kernel.cal.TZSRecurrence;
 import com.liferay.portal.kernel.dao.db.DBInspector;
@@ -99,6 +99,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -514,7 +515,7 @@ public class CalEventImporter {
 		recurrence.setFrequency(frequency);
 		recurrence.setPositionalWeekdays(positionalWeekdays);
 
-		java.util.Calendar untilJCalendar = tzsRecurrence.getUntil();
+		Calendar untilJCalendar = tzsRecurrence.getUntil();
 
 		int ocurrence = tzsRecurrence.getOccurrence();
 
@@ -1489,13 +1490,13 @@ public class CalEventImporter {
 		_frequencies.put(TZSRecurrence.MONTHLY, Frequency.MONTHLY);
 		_frequencies.put(TZSRecurrence.YEARLY, Frequency.YEARLY);
 
-		_weekdays.put(java.util.Calendar.SUNDAY, Weekday.SUNDAY);
-		_weekdays.put(java.util.Calendar.MONDAY, Weekday.MONDAY);
-		_weekdays.put(java.util.Calendar.TUESDAY, Weekday.TUESDAY);
-		_weekdays.put(java.util.Calendar.WEDNESDAY, Weekday.WEDNESDAY);
-		_weekdays.put(java.util.Calendar.THURSDAY, Weekday.THURSDAY);
-		_weekdays.put(java.util.Calendar.FRIDAY, Weekday.FRIDAY);
-		_weekdays.put(java.util.Calendar.SATURDAY, Weekday.SATURDAY);
+		_weekdays.put(Calendar.SUNDAY, Weekday.SUNDAY);
+		_weekdays.put(Calendar.MONDAY, Weekday.MONDAY);
+		_weekdays.put(Calendar.TUESDAY, Weekday.TUESDAY);
+		_weekdays.put(Calendar.WEDNESDAY, Weekday.WEDNESDAY);
+		_weekdays.put(Calendar.THURSDAY, Weekday.THURSDAY);
+		_weekdays.put(Calendar.FRIDAY, Weekday.FRIDAY);
+		_weekdays.put(Calendar.SATURDAY, Weekday.SATURDAY);
 	}
 
 	private AssetCategoryLocalService _assetCategoryLocalService;

@@ -14,6 +14,7 @@
 
 package com.liferay.fragment.processor;
 
+import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.osgi.service.tracker.collections.map.PropertyServiceReferenceComparator;
@@ -31,6 +32,22 @@ import org.osgi.service.component.annotations.Deactivate;
  */
 @Component(immediate = true, service = FragmentEntryProcessorRegistry.class)
 public class FragmentEntryProcessorRegistry {
+
+	public String processFragmentEntryLinkHTML(
+			FragmentEntryLink fragmentEntryLink)
+		throws PortalException {
+
+		String html = fragmentEntryLink.getHtml();
+
+		for (FragmentEntryProcessor fragmentEntryProcessor :
+				_serviceTrackerList) {
+
+			html = fragmentEntryProcessor.processFragmentEntryLinkHTML(
+				fragmentEntryLink, html);
+		}
+
+		return html;
+	}
 
 	public void validateFragmentEntryHTML(String html) throws PortalException {
 		for (FragmentEntryProcessor fragmentEntryProcessor :

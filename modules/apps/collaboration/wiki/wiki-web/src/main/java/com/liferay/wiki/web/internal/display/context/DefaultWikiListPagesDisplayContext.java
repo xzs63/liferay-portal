@@ -69,8 +69,8 @@ import com.liferay.wiki.service.WikiPageResourceLocalServiceUtil;
 import com.liferay.wiki.service.WikiPageServiceUtil;
 import com.liferay.wiki.util.comparator.PageVersionComparator;
 import com.liferay.wiki.web.internal.display.context.util.WikiRequestHelper;
-import com.liferay.wiki.web.internal.security.permission.WikiNodePermission;
-import com.liferay.wiki.web.internal.security.permission.WikiPagePermission;
+import com.liferay.wiki.web.internal.security.permission.resource.WikiNodePermission;
+import com.liferay.wiki.web.internal.security.permission.resource.WikiPagePermission;
 import com.liferay.wiki.web.internal.util.WikiPortletUtil;
 import com.liferay.wiki.web.internal.util.WikiWebComponentProvider;
 
@@ -393,8 +393,7 @@ public class DefaultWikiListPagesDisplayContext
 				links, searchContainer.getStart(), searchContainer.getEnd());
 		}
 		else if (navigation.equals("orphan-pages")) {
-			List<WikiPage> orphans = WikiPageServiceUtil.getOrphans(
-				themeDisplay.getScopeGroupId(), _wikiNode.getNodeId());
+			List<WikiPage> orphans = WikiPageServiceUtil.getOrphans(_wikiNode);
 
 			total = orphans.size();
 

@@ -14,11 +14,11 @@
 
 package com.liferay.portal.workflow.kaleo.internal.upgrade.v1_4_1;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.upgrade.AutoBatchPreparedStatementUtil;
 
@@ -213,7 +213,7 @@ public class UpgradeKaleoDefinitionVersion extends UpgradeProcess {
 					connection, sb2.toString());
 			ResultSet rs = ps1.executeQuery()) {
 
-			for (String tableName : _tableNames) {
+			for (String tableName : _TABLE_NAMES) {
 				if (hasColumn(tableName, "kaleoDefinitionId")) {
 					StringBundler sb3 = new StringBundler(4);
 
@@ -286,7 +286,7 @@ public class UpgradeKaleoDefinitionVersion extends UpgradeProcess {
 		}
 	}
 
-	private static final String[] _tableNames = {
+	private static final String[] _TABLE_NAMES = {
 		"KaleoAction", "KaleoCondition", "KaleoInstance", "KaleoInstanceToken",
 		"KaleoLog", "KaleoNode", "KaleoNotification",
 		"KaleoNotificationRecipient", "KaleoTask", "KaleoTaskAssignment",

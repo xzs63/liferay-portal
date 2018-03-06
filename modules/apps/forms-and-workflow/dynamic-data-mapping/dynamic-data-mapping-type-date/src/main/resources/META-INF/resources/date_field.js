@@ -79,14 +79,11 @@ AUI.add(
 						var predefinedValue = instance.get('predefinedValue');
 						var value = instance.get('value');
 
-						instance.set('readOnly', false);
-
 						return A.merge(
 							DateField.superclass.getTemplateContext.apply(instance, arguments),
 							{
 								formattedValue: instance.formatDate(value),
 								predefinedValue: instance.formatDate(predefinedValue),
-								readOnly: false,
 								value: value
 							}
 						);
@@ -122,9 +119,9 @@ AUI.add(
 
 						var container = instance.get('container');
 
-						var inputGroup = container.one('.input-group-container');
+						var formGroup = container.one('.form-group');
 
-						inputGroup.insert(container.one('.form-feedback-indicator'), 'after');
+						formGroup.append(container.one('.form-feedback-item'));
 					},
 
 					_afterSelectionChange: function(event) {

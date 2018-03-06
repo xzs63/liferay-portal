@@ -68,7 +68,7 @@
 			{let $hasChanges: $history and $history.canUndo /}
 
 			{let $saveButtonAttributes kind="attributes"}
-				class="btn btn-default btn-lg btn-primary {$hasChanges ? '' : 'disabled'}"
+				class="btn btn-default btn-primary {$hasChanges ? '' : 'disabled'}"
 				data-onclick="save_"
 
 				{if not $hasChanges}
@@ -80,7 +80,7 @@
 				<span class="lfr-btn-label">{$strings['save']}</span>
 			</button>
 
-			<button class="btn btn-cancel btn-default btn-lg btn-link" data-onclick="close_">
+			<button class="btn btn-cancel btn-default btn-link" data-onclick="close_">
 				<span class="lfr-btn-label">{$strings['cancel']}</span>
 			</button>
 		</div>
@@ -189,6 +189,7 @@
 		<div class="col-2 mt-4">
 			<button class="btn btn-link" data-onclick="accept">{$strings['apply']}</button>
 		</div>
+
 		<div class="col-8 tool-controls">
 			{if $selectedControl and $selectedControl.label == $control.label}
 				{call .active_controls data="all"}
@@ -197,6 +198,7 @@
 				{/call}
 			{/if}
 		</div>
+
 		<div class="col-2 mt-4">
 			<button class="btn btn-link" data-onclick="discard">{$strings['cancel']}</button>
 		</div>

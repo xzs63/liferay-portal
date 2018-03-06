@@ -18,9 +18,7 @@ import com.liferay.announcements.kernel.model.AnnouncementsEntry;
 import com.liferay.announcements.kernel.service.AnnouncementsEntryLocalService;
 import com.liferay.announcements.uad.constants.AnnouncementsUADConstants;
 import com.liferay.announcements.uad.entity.AnnouncementsEntryUADEntity;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.user.associated.data.aggregator.BaseUADEntityAggregator;
 import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
 import com.liferay.user.associated.data.entity.UADEntity;
 
@@ -35,17 +33,21 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = "model.class.name=" + AnnouncementsUADConstants.ANNOUNCEMENTS_ENTRY,
+	property = {"model.class.name=" + AnnouncementsUADConstants.CLASS_NAME_ANNOUNCEMENTS_ENTRY},
 	service = UADEntityAggregator.class
 )
 public class AnnouncementsEntryUADEntityAggregator
-	extends BaseUADEntityAggregator {
+	extends BaseAnnouncementsUADEntityAggregator {
 
 	@Override
-	public List<UADEntity> getUADEntities(long userId) {
+	public int count(long userId) {
+		return _announcementsEntryLocalService.getUserEntriesCount(userId);
+	}
+
+	@Override
+	public List<UADEntity> getUADEntities(long userId, int start, int end) {
 		List<AnnouncementsEntry> announcementsEntries =
-			_announcementsEntryLocalService.getUserEntries(
-				userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			_announcementsEntryLocalService.getUserEntries(userId, start, end);
 
 		List<UADEntity> uadEntities = new ArrayList<>(
 			announcementsEntries.size());

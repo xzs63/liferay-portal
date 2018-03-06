@@ -58,7 +58,9 @@
 	<command name="addCustomAbstract">
 		<execute function="Click" locator1="Radio#CUSTOM_ABSTRACT" />
 
-		<execute function="Type" locator1="TextInput#DESCRIPTION" value1="${entryAbstractDescription}" />
+		<execute macro="PortletEntry#inputDescriptionTextInput">
+			<var name="description" value="${entryAbstractDescription}" />
+		</execute>
 	</command>
 
 	<command name="addCustomURL">
@@ -206,7 +208,10 @@
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-		<execute function="Type" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
+		<execute macro="PortletEntry#inputTitle">
+			<var name="title" value="${entryTitle}" />
+		</execute>
+
 		<execute function="Type" locator1="BlogsEntry#CONTENT" value1="${entryContent}" />
 
 		<execute function="AssertClick" locator1="Button#SUBMIT_FOR_PUBLICATION" value1="Submit for Publication" />
@@ -215,9 +220,9 @@
 
 		<execute function="SelectFrame" value1="relative=top" />
 
-		<var name="key_assetTitle" value="${entryTitle}" />
-
-		<execute function="AssertElementNotPresent" locator1="AP#ASSET_ABSTRACT_TITLE" value1="${entryTitle}" />
+		<execute function="AssertElementNotPresent" locator1="AP#ASSET_ABSTRACT_TITLE">
+			<var name="key_assetTitle" value="${entryTitle}" />
+		</execute>
 	</command>
 
 	<command name="autoSaveDraft">
@@ -243,6 +248,36 @@
 			<var name="entryContent" value="${entryContent}" />
 			<var name="entryContentEdit" value="${entryContentEdit}" />
 		</execute>
+	</command>
+
+	<command name="editDisplayDate">
+		<var method="DateUtil#getCurrentDate()" name="displayDateDay" />
+		<var method="DateUtil#getCurrentMonth()" name="displayDateMonth" />
+		<var method="DateUtil#getCurrentYear()" name="displayDateYear" />
+
+		<var name="displayDate" value="${displayDateMonth}/${displayDateDay}/${displayDateYear}" />
+
+		<execute function="Type" locator1="TextInput#DISPLAY_DATE" value1="${displayDate}" />
+
+		<var method="DateUtil#getCurrentHour()" name="displayTimeHour" />
+
+		<var name="displayTimeMinute" value="${displayTimeMinute}" />
+
+		<var name="displayTime" value="${displayTimeHour}:${displayTimeMinute}" />
+
+		<execute function="Type" locator1="TextInput#DISPLAY_DATE_TIME" value1="${displayTime}" />
+	</command>
+
+	<command name="editDisplayDateYear">
+		<var method="selenium#getElementValue(TextInput#DISPLAY_DATE_DAY)" name="displayDateDay" />
+		<var method="selenium#getElementValue(TextInput#DISPLAY_DATE_MONTH)" name="displayDateMonth" />
+		<var method="DateUtil#getCurrentYear()" name="displayDateYear" />
+
+		<var method="MathUtil#sum('${displayDateYear}','1')" name="displayDateYear" />
+
+		<var name="displayDate" value="${displayDateMonth}/${displayDateDay}/${displayDateYear}" />
+
+		<execute function="Type" locator1="TextInput#DISPLAY_DATE" value1="${displayDate}" />
 	</command>
 
 	<command name="editEntryContent">
@@ -278,7 +313,7 @@
 
 		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM" value1="Edit">
+		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM">
 			<var name="key_menuItem" value="Edit" />
 		</execute>
 	</command>
@@ -350,11 +385,11 @@
 
 		<execute function="Select" locator1="ReportContent#REASON_SELECT" value1="${flagReason}" />
 
-		<execute macro="Button#clickSave" />
+		<execute function="AssertClick" locator1="Button#REPORT" value1="Report" />
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="ReportContent#SUCCESS_MESSAGE" value1="Although we cannot disclose our final decision, we do review every report and appreciate your effort to make sure ${siteName} is a safe environment for everyone." />
 
-		<execute function="Click" locator1="Icon#CLOSE" />
+		<execute function="Click" locator1="Button#CLOSE" />
 	</command>
 
 	<command name="gotoScheduledEditPG">
@@ -418,14 +453,14 @@
 		<execute function="AssertClick" locator1="Button#PUBLISH" value1="Publish" />
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="BlogsEntry#CONTENT_FIELD_HELPER" value1="This field is required." />
-		<execute function="AssertElementNotPresent" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertElementNotPresent" locator1="Message#SUCCESS" />
 	</command>
 
 	<command name="publishWithInvalidTitle">
 		<execute function="AssertClick" locator1="Button#PUBLISH" value1="Publish" />
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="BlogsEntry#TITLE_FIELD_HELPER" value1="This field is required to publish the entry." />
-		<execute function="AssertElementNotPresent" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertElementNotPresent" locator1="Message#SUCCESS" />
 	</command>
 
 	<command name="publishWithInvalidTitleLength">
@@ -552,9 +587,9 @@
 		<var name="key_entryContent" value="${entryContent}" />
 		<var name="key_entryTitle" value="${entryTitle}" />
 
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${entrySearchTerm}" />
-
-		<execute function="KeyPress" locator1="NavBar#BASIC_SEARCH_FIELD" value1="\RETURN" />
+		<execute macro="Search#searchCP">
+			<var name="searchTerm" value="${entrySearchTerm}" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="Blogs#DESCRIPTIVE_VIEW_ENTRY_TITLE" value1="${entryTitle}" />
 	</command>
@@ -563,47 +598,50 @@
 		<var name="key_entryContent" value="${entryContent}" />
 		<var name="key_entryTitle" value="${entryTitle}" />
 
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${entrySearchTerm}" />
-
-		<execute function="KeyPress" locator1="NavBar#BASIC_SEARCH_FIELD" value1="\RETURN" />
+		<execute macro="Search#searchCP">
+			<var name="searchTerm" value="${entrySearchTerm}" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No entries were found." />
-		<execute function="AssertElementNotPresent" locator1="Blogs#DESCRIPTIVE_VIEW_ENTRY_TITLE" value1="${entryTitle}" />
+		<execute function="AssertElementNotPresent" locator1="Blogs#DESCRIPTIVE_VIEW_ENTRY_TITLE" />
 	</command>
 
 	<command name="searchNoPG">
 		<var name="key_entryContent" value="${entryContent}" />
 		<var name="key_entryTitle" value="${entryTitle}" />
 
-		<execute function="Type" locator1="TextInput#SEARCH" value1="${entrySearchTerm}" />
-
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute macro="Search#searchPG">
+			<var name="portletName" value="Blogs" />
+			<var name="searchTerm" value="${entrySearchTerm}" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="Message#INFO" value1="No entries were found that matched the keywords: ${entrySearchTerm}." />
 
-		<execute function="AssertElementNotPresent" locator1="Blogs#SEARCH_RESULTS_ENTRY_TITLE" value1="${entryTitle}" />
-		<execute function="AssertElementNotPresent" locator1="Blogs#SEARCH_RESULTS_ENTRY_DESCRIPTION" value1="${entryContent}" />
+		<execute function="AssertElementNotPresent" locator1="Blogs#SEARCH_RESULTS_ENTRY_TITLE" />
+		<execute function="AssertElementNotPresent" locator1="Blogs#SEARCH_RESULTS_ENTRY_DESCRIPTION" />
 	</command>
 
 	<command name="searchNoResultsCP">
 		<var name="key_entryContent" value="${entryContent}" />
 		<var name="key_entryTitle" value="${entryTitle}" />
 
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${entrySearchTerm}" />
-
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute macro="Search#searchCP">
+			<var name="searchTerm" value="${entrySearchTerm}" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="Message#INFO" value1="No entries were found that matched the keywords: ${entrySearchTerm}." />
-		<execute function="AssertElementNotPresent" locator1="Blogs#SEARCH_RESULTS_ENTRY_TITLE" value1="${entryTitle}" />
-		<execute function="AssertElementNotPresent" locator1="Blogs#SEARCH_RESULTS_ENTRY_DESCRIPTION" value1="${entryContent}" />
+		<execute function="AssertElementNotPresent" locator1="Blogs#SEARCH_RESULTS_ENTRY_TITLE" />
+		<execute function="AssertElementNotPresent" locator1="Blogs#SEARCH_RESULTS_ENTRY_DESCRIPTION" />
 	</command>
 
 	<command name="searchPG">
 		<var name="key_entryContent" value="${entryContent}" />
 		<var name="key_entryTitle" value="${entryTitle}" />
 
-		<execute function="Type" locator1="TextInput#SEARCH" value1="${entrySearchTerm}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute macro="Search#searchPG">
+			<var name="portletName" value="Blogs" />
+			<var name="searchTerm" value="${entrySearchTerm}" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="Blogs#SEARCH_RESULTS_ENTRY_TITLE" value1="${entryTitle}" />
 		<execute function="AssertTextEquals" locator1="Blogs#SEARCH_RESULTS_ENTRY_DESCRIPTION" value1="${entryContent}" />
@@ -726,7 +764,7 @@
 
 	<command name="viewDefaultCP">
 		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No entries were found." />
-		<execute function="AssertElementNotPresent" locator1="Blogs#ENTRY_TABLE_TITLE" value1="${entryTitle}" />
+		<execute function="AssertElementNotPresent" locator1="Blogs#ENTRY_TABLE_TITLE" />
 	</command>
 
 	<command name="viewDetailsPG">
@@ -773,7 +811,9 @@
 	</command>
 
 	<command name="viewDisabledSocialBookmarkSites">
-		<execute function="AssertElementNotPresent" locator1="Icon#SHARE" />
+		<execute function="AssertElementNotPresent" locator1="SocialBookmarks#SOCIAL_BOOKMARKS_SITE_LINK">
+			<var name="key_socialBookmarkSite" value="${socialBookmarkSite}" />
+		</execute>
 	</command>
 
 	<command name="viewEnabledSocialBookmarkSites">
@@ -901,9 +941,9 @@
 	</command>
 
 	<command name="viewNoCP">
-		<var name="key_entryTitle" value="${entryTitle}" />
-
-		<execute function="AssertElementNotPresent" locator1="Blogs#ENTRY_TABLE_TITLE" value1="${entryTitle}" />
+		<execute function="AssertElementNotPresent" locator1="Blogs#ENTRY_TABLE_TITLE">
+			<var name="key_entryTitle" value="${entryTitle}" />
+		</execute>
 	</command>
 
 	<command name="viewNoEditPermissions">
@@ -911,9 +951,9 @@
 	</command>
 
 	<command name="viewNoEntryAsGuestPG">
-		<var name="key_entryTitle" value="${entryTitle}" />
-
-		<execute function="AssertElementNotPresent" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
+		<execute function="AssertElementNotPresent" locator1="BlogsEntry#TITLE">
+			<var name="key_entryTitle" value="${entryTitle}" />
+		</execute>
 	</command>
 
 	<command name="viewNoEntryViaAPPG">
@@ -928,19 +968,39 @@
 	</command>
 
 	<command name="viewNoPG">
+		<execute function="AssertElementNotPresent" locator1="BlogsEntry#TITLE">
+			<var name="key_entryTitle" value="${entryTitle}" />
+		</execute>
+	</command>
+
+	<command name="viewNoTag">
 		<var name="key_entryTitle" value="${entryTitle}" />
 
-		<execute function="AssertElementNotPresent" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
+		<if>
+			<isset var="tagNameList" />
+			<then>
+				<for list="${tagNameList}" param="tagName">
+					<execute function="AssertElementNotPresent" locator1="BlogsEntry#TAG">
+						<var method="StringUtil#lowerCase('${tagName}')" name="key_tagName" />
+					</execute>
+				</for>
+			</then>
+			<else>
+				<execute function="AssertElementNotPresent" locator1="BlogsEntry#TAG">
+					<var method="StringUtil#lowerCase('${tagName}')" name="key_tagName" />
+				</execute>
+			</else>
+		</if>
 	</command>
 
 	<command name="viewPermissionsNoPermission">
-		<execute function="AssertElementNotPresent" locator1="Link#PERMISSIONS" value1="Permissions" />
+		<execute function="AssertElementNotPresent" locator1="Link#PERMISSIONS" />
 	</command>
 
 	<command name="viewPermissionsNoPermissionPG">
 		<var name="key_entryTitle" value="${entryTitle}" />
 
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM" value1="Permissions">
+		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM">
 			<var name="key_menuItem" value="Permissions" />
 		</execute>
 	</command>
@@ -1051,10 +1111,14 @@
 		<execute function="SelectWindow#selectPopUp" locator1="null" />
 
 		<execute function="AssertLocation#assertPartialLocation" value1="blogs/rss" />
-		<execute function="AssertTextEquals" locator1="Blogs#RSS_FEED_TITLE" value1="${siteName}" />
-		<execute function="AssertTextEquals" locator1="Blogs#RSS_FEED_SUBTITLE" value1="${siteName}" />
-		<execute function="AssertTextEquals" locator1="Blogs#RSS_ENTRY_TITLE" value1="${entryTitle}" />
-		<execute function="AssertTextEquals" locator1="Blogs#RSS_ENTRY_CONTENT" value1="${entryContent}" />
+		<execute function="AssertTextEquals" locator1="RSS#FEED_TITLE" value1="${siteName}" />
+		<execute function="AssertTextEquals" locator1="RSS#FEED_SUBTITLE" value1="${siteName}" />
+
+		<var name="key_entryContent" value="${entryContent}" />
+		<var name="key_entryTitle" value="${entryTitle}" />
+
+		<execute function="AssertTextEquals" locator1="RSS#ENTRY_TITLE" value1="${entryTitle}" />
+		<execute function="AssertTextEquals" locator1="RSS#ENTRY_CONTENT" value1="${entryContent}" />
 	</command>
 
 	<command name="viewStatus">
@@ -1284,6 +1348,6 @@
 	<command name="viewWithWorkflowPGViaAP">
 		<var name="key_assetTitle" value="${entryTitle}" />
 
-		<execute function="AssertElementNotPresent" locator1="AP#ASSET_ABSTRACT_TITLE" value1="${entryTitle}" />
+		<execute function="AssertElementNotPresent" locator1="AP#ASSET_ABSTRACT_TITLE" />
 	</command>
 </definition>

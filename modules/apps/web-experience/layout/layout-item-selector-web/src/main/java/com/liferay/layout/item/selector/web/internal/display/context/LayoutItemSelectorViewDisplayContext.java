@@ -16,6 +16,7 @@ package com.liferay.layout.item.selector.web.internal.display.context;
 
 import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.layout.item.selector.criterion.LayoutItemSelectorCriterion;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -29,7 +30,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Collections;
@@ -87,6 +87,10 @@ public class LayoutItemSelectorViewDisplayContext {
 
 	public boolean isFollowURLOnTitleClick() {
 		return _layoutItemSelectorCriterion.isFollowURLOnTitleClick();
+	}
+
+	public boolean isMultiSelection() {
+		return _layoutItemSelectorCriterion.isMultiSelection();
 	}
 
 	private String _getLayoutBreadcrumb(Layout layout) throws Exception {

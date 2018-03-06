@@ -219,7 +219,7 @@ kbGroupServiceConfiguration = ParameterMapUtil.setParameterMap(KBGroupServiceCon
 					<div class="container-fluid-1280">
 						<aui:fieldset-group markupView="lexicon">
 							<aui:fieldset>
-								<liferay-ui:rss-settings
+								<liferay-rss:rss-settings
 									delta="<%= kbGroupServiceConfiguration.rssDelta() %>"
 									displayStyle="<%= kbGroupServiceConfiguration.rssDisplayStyle() %>"
 									enabled="<%= kbGroupServiceConfiguration.enableRSS() %>"
@@ -234,7 +234,7 @@ kbGroupServiceConfiguration = ParameterMapUtil.setParameterMap(KBGroupServiceCon
 	</div>
 
 	<aui:button-row>
-		<aui:button cssClass="btn btn-lg btn-primary" onClick='<%= renderResponse.getNamespace() + "save();" %>' value="save" />
+		<aui:button onClick='<%= renderResponse.getNamespace() + "save();" %>' value="save" />
 	</aui:button-row>
 </aui:form>
 

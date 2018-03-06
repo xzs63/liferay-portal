@@ -316,7 +316,7 @@ AUI.add(
 						deleteIcon: Liferay.Util.getLexiconIconTpl('trash', 'icon-monospaced'),
 						if: instance.get('if'),
 						index: index,
-						logicOperator: instance.get('logicOperator')
+						logicalOperator: instance.get('logicOperator')
 					},
 					container
 				);
@@ -332,14 +332,23 @@ AUI.add(
 				var instance = this;
 
 				var field = event.target;
-
 				var fieldName = field.get('fieldName');
+				var options = field.get('options').concat(field.get('fixedOptions'));
 
 				if (fieldName) {
 					var index = fieldName.split('-')[0];
 
 					if (fieldName.match('-condition-first-operand')) {
-						var type = instance._getDataType(field.getValue(), field.get('options'));
+						var operatorSelected = instance._getOperator(index);
+						var type = instance._getDataType(field.getValue(), options);
+
+						operatorSelected.cleanSelect();
+
+						instance._hideSecondOperandField(index);
+
+						instance._hideSecondOperandTypeField(index);
+
+						instance._clearOperatorField(index);
 
 						instance._updateOperatorList(type, index);
 					}
@@ -469,6 +478,8 @@ AUI.add(
 			_renderFirstOperand: function(index, condition, container) {
 				var instance = this;
 
+				var fixedFields = [];
+
 				var value = [];
 
 				if (condition) {
@@ -477,11 +488,12 @@ AUI.add(
 
 				var fields = instance.get('fields').slice();
 
-				fields.unshift(currentUser);
+				fixedFields.push(currentUser);
 
 				var field = instance.createSelectField(
 					{
 						fieldName: index + '-condition-first-operand',
+						fixedOptions: fixedFields,
 						label: instance.get('strings').if,
 						options: fields,
 						showLabel: false,
@@ -685,12 +697,6 @@ AUI.add(
 			_updateOperatorList: function(dataType, conditionIndex) {
 				var instance = this;
 
-				instance._hideSecondOperandField(conditionIndex);
-
-				instance._hideSecondOperandTypeField(conditionIndex);
-
-				instance._clearOperatorField(conditionIndex);
-
 				var operator = instance._getOperator(conditionIndex);
 
 				var operatorTypes = Liferay.DDM.Settings.functionsMetadata;
@@ -740,8 +746,6 @@ AUI.add(
 			_updateSecondOperandFieldVisibility: function(index) {
 				var instance = this;
 
-				instance._hideSecondOperandField(index);
-
 				var secondOperandType = instance._getSecondOperandType(index);
 
 				if (secondOperandType.get('visible')) {
@@ -752,10 +756,15 @@ AUI.add(
 					var secondOperandOptions = instance._getSecondOperand(index, 'options');
 
 					if (secondOperandTypeValue === 'field') {
+						instance._hideSecondOperandField(index);
+
 						secondOperandFields.set('visible', true);
+
 						secondOperandOptions.cleanSelect();
 					}
 					else if (instance._isConstant(secondOperandTypeValue)) {
+						instance._hideSecondOperandField(index);
+
 						var options = instance._getFieldOptions(instance._getFirstOperandValue(index));
 
 						if (options.length > 0 && instance._getFieldType(instance._getFirstOperandValue(index)) !== 'text') {
@@ -800,7 +809,6 @@ AUI.add(
 							}
 						];
 					}
-
 					secondOperandType.set('options', options);
 				}
 			},

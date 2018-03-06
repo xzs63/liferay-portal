@@ -20,9 +20,11 @@
 
 <%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
 taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/expando" prefix="liferay-expando" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
+taglib uri="http://liferay.com/tld/rss" prefix="liferay-rss" %><%@
 taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
@@ -81,13 +83,6 @@ page import="com.liferay.knowledge.base.service.KBCommentServiceUtil" %><%@
 page import="com.liferay.knowledge.base.service.KBFolderLocalServiceUtil" %><%@
 page import="com.liferay.knowledge.base.service.KBFolderServiceUtil" %><%@
 page import="com.liferay.knowledge.base.service.KBTemplateServiceUtil" %><%@
-page import="com.liferay.knowledge.base.service.permission.AdminPermission" %><%@
-page import="com.liferay.knowledge.base.service.permission.DisplayPermission" %><%@
-page import="com.liferay.knowledge.base.service.permission.KBArticlePermission" %><%@
-page import="com.liferay.knowledge.base.service.permission.KBCommentPermission" %><%@
-page import="com.liferay.knowledge.base.service.permission.KBFolderPermission" %><%@
-page import="com.liferay.knowledge.base.service.permission.KBTemplatePermission" %><%@
-page import="com.liferay.knowledge.base.service.permission.SuggestionPermission" %><%@
 page import="com.liferay.knowledge.base.service.util.AdminUtil" %><%@
 page import="com.liferay.knowledge.base.service.util.KnowledgeBaseConstants" %><%@
 page import="com.liferay.knowledge.base.util.KnowledgeBaseUtil" %><%@
@@ -101,6 +96,7 @@ page import="com.liferay.knowledge.base.web.internal.configuration.KBDisplayPort
 page import="com.liferay.knowledge.base.web.internal.configuration.KBSearchPortletInstanceConfiguration" %><%@
 page import="com.liferay.knowledge.base.web.internal.configuration.KBSectionPortletInstanceConfiguration" %><%@
 page import="com.liferay.knowledge.base.web.internal.constants.KBWebKeys" %><%@
+page import="com.liferay.knowledge.base.web.internal.display.context.KBAdminNavigationDisplayContext" %><%@
 page import="com.liferay.knowledge.base.web.internal.display.context.KBAdminViewDisplayContext" %><%@
 page import="com.liferay.knowledge.base.web.internal.display.context.KBNavigationDisplayContext" %><%@
 page import="com.liferay.knowledge.base.web.internal.display.context.KBSelectParentDisplayContext" %><%@
@@ -110,8 +106,15 @@ page import="com.liferay.knowledge.base.web.internal.search.EntriesChecker" %><%
 page import="com.liferay.knowledge.base.web.internal.search.KBCommentsChecker" %><%@
 page import="com.liferay.knowledge.base.web.internal.search.KBObjectsSearch" %><%@
 page import="com.liferay.knowledge.base.web.internal.search.KBTemplateSearch" %><%@
+page import="com.liferay.knowledge.base.web.internal.security.permission.resource.AdminPermission" %><%@
+page import="com.liferay.knowledge.base.web.internal.security.permission.resource.DisplayPermission" %><%@
+page import="com.liferay.knowledge.base.web.internal.security.permission.resource.KBArticlePermission" %><%@
+page import="com.liferay.knowledge.base.web.internal.security.permission.resource.KBCommentPermission" %><%@
+page import="com.liferay.knowledge.base.web.internal.security.permission.resource.KBFolderPermission" %><%@
+page import="com.liferay.knowledge.base.web.internal.security.permission.resource.KBTemplatePermission" %><%@
 page import="com.liferay.knowledge.base.web.internal.util.KBArticleAssetEntriesUtil" %><%@
-page import="com.liferay.message.boards.kernel.model.MBMessage" %><%@
+page import="com.liferay.message.boards.model.MBMessage" %><%@
+page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.configuration.metatype.util.ParameterMapUtil" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.bean.BeanPropertiesUtil" %><%@
@@ -169,7 +172,6 @@ page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.PropsKeys" %><%@
 page import="com.liferay.portal.kernel.util.PropsUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringBundler" %><%@
-page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.TextFormatter" %><%@
 page import="com.liferay.portal.kernel.util.Time" %><%@

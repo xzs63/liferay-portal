@@ -68,6 +68,7 @@ public class AnnouncementsEntryUADEntityExporterTest
 		new LiferayIntegrationTestRule();
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 
@@ -163,12 +164,12 @@ public class AnnouncementsEntryUADEntityExporterTest
 	private GroupLocalService _groupLocalService;
 
 	@Inject(
-		filter = "model.class.name=" + AnnouncementsUADConstants.ANNOUNCEMENTS_ENTRY
+		filter = "model.class.name=" + AnnouncementsUADConstants.CLASS_NAME_ANNOUNCEMENTS_ENTRY
 	)
 	private UADEntityAggregator _uadEntityAggregator;
 
 	@Inject(
-		filter = "model.class.name=" + AnnouncementsUADConstants.ANNOUNCEMENTS_ENTRY
+		filter = "model.class.name=" + AnnouncementsUADConstants.CLASS_NAME_ANNOUNCEMENTS_ENTRY
 	)
 	private UADEntityExporter _uadEntityExporter;
 

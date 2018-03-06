@@ -70,10 +70,12 @@ AUI.add(
 				var inputNode = instance.getInputNode();
 
 				if (errorMessage && inputNode) {
-					inputNode.insert(instance._errorMessageNode, 'after');
+					var targetNode = inputNode.ancestor(".form-group");
 
+					targetNode.insert(instance._errorMessageNode, 'after');
+
+					instance.set('valid', false);
 					instance._errorMessageNode.show();
-
 					instance.showValidationStatus();
 
 					var root = instance.getRoot();

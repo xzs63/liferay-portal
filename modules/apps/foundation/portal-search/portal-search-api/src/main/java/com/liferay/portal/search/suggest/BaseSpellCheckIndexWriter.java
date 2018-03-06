@@ -15,6 +15,7 @@
 package com.liferay.portal.search.suggest;
 
 import com.liferay.petra.nio.CharsetEncoderUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -33,7 +34,6 @@ import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.InputStream;
@@ -70,7 +70,7 @@ public abstract class BaseSpellCheckIndexWriter
 		long[] groupIds = searchContext.getGroupIds();
 
 		if ((groupIds != null) && (groupIds.length > 0)) {
-			groupId = groupIds[1];
+			groupId = groupIds[0];
 		}
 
 		String keywordFieldName = Field.KEYWORD_SEARCH;
@@ -169,6 +169,17 @@ public abstract class BaseSpellCheckIndexWriter
 		_querySuggestionMaxNGramLength = querySuggestionMaxNGramLength;
 	}
 
+	protected Digester getDigester() {
+
+		// See LPS-72507 and LPS-76500
+
+		if (digester != null) {
+			return digester;
+		}
+
+		return DigesterUtil.getDigester();
+	}
+
 	protected URL getResource(String name) {
 		Thread thread = Thread.currentThread();
 
@@ -192,13 +203,14 @@ public abstract class BaseSpellCheckIndexWriter
 	}
 
 	protected String getUID(
-		long companyId, String languageId, String word, String... parameters) {
+		long companyId, String keywordFieldName, String languageId, String word,
+		String... parameters) {
 
 		StringBundler uidSB = new StringBundler(5);
 
 		uidSB.append(String.valueOf(companyId));
 		uidSB.append(StringPool.UNDERLINE);
-		uidSB.append(Field.SPELL_CHECK_WORD);
+		uidSB.append(keywordFieldName);
 		uidSB.append(StringPool.UNDERLINE);
 
 		int length = 5;
@@ -208,10 +220,7 @@ public abstract class BaseSpellCheckIndexWriter
 		}
 
 		try {
-
-			// See LPS-72507 and LPS-76500
-
-			Digester digester = DigesterUtil.getDigester();
+			Digester digester = getDigester();
 
 			CharsetEncoder charsetEncoder =
 				CharsetEncoderUtil.getCharsetEncoder(StringPool.UTF8);
@@ -322,6 +331,8 @@ public abstract class BaseSpellCheckIndexWriter
 				maxNGramLength);
 		}
 	}
+
+	protected Digester digester;
 
 	@Reference
 	protected GroupLocalService groupLocalService;

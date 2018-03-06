@@ -16,7 +16,10 @@ package com.liferay.fragment.model.impl;
 
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.zip.ZipWriter;
 
 import java.util.List;
@@ -27,12 +30,15 @@ import java.util.List;
 public class FragmentCollectionImpl extends FragmentCollectionBaseImpl {
 
 	@Override
-	public void populateZipWriter(ZipWriter zipWriter, String path)
-		throws Exception {
+	public void populateZipWriter(ZipWriter zipWriter) throws Exception {
+		String path = StringPool.SLASH + getFragmentCollectionKey();
 
-		path = path + getFragmentCollectionId();
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-		zipWriter.addEntry(path + "/name.txt", getName());
+		jsonObject.put("description", getDescription());
+		jsonObject.put("name", getName());
+
+		zipWriter.addEntry(path + "/collection.json", jsonObject.toString());
 
 		List<FragmentEntry> fragmentEntries =
 			FragmentEntryLocalServiceUtil.getFragmentEntries(

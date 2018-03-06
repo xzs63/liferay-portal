@@ -14,6 +14,7 @@
 
 package com.liferay.portlet;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.ccpp.PortalProfileFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -41,7 +42,6 @@ import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -335,28 +335,7 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 
 	@Override
 	public PortletSession getPortletSession(boolean create) {
-		/*HttpSession httpSes = _req.getSession(create);
-
-		if (httpSes == null) {
-			return null;
-		}
-		else {
-			if (create) {
-				_session = new PortletSessionImpl(
-					_req.getSession(), _portletContext, _portletName, _plid);
-			}
-
-			return _ses;
-		}*/
-
-		/*if ((_session == null) && create) {
-			_req.getSession(create);
-
-			_session = new PortletSessionImpl(
-				_req.getSession(), _portletContext, _portletName, _plid);
-		}*/
-
-		if (!create && _invalidSession) {
+		if (!create && !isRequestedSessionIdValid()) {
 			return null;
 		}
 
@@ -653,7 +632,9 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 		try {
 			long companyId = PortalUtil.getCompanyId(_request);
 
-			String roleLink = _portlet.getRoleMappers().get(role);
+			Map<String, String> roleMappersMap = _portlet.getRoleMappers();
+
+			String roleLink = roleMappersMap.get(role);
 
 			if (Validator.isNotNull(roleLink)) {
 				return RoleLocalServiceUtil.hasUserRole(
@@ -1010,8 +991,6 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 			return;
 		}
 
-		boolean resourcePhase = lifecycle.equals(PortletRequest.RESOURCE_PHASE);
-
 		Enumeration<String> enumeration = preferences.getNames();
 
 		if (!enumeration.hasMoreElements()) {
@@ -1035,7 +1014,10 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 				String[] requestValues = dynamicRequest.getParameterValues(
 					name);
 
-				if ((requestValues != null) && resourcePhase) {
+				if ((requestValues != null) &&
+					(lifecycle.equals(PortletRequest.ACTION_PHASE) ||
+					 lifecycle.equals(PortletRequest.RESOURCE_PHASE))) {
+
 					dynamicRequest.setParameterValues(
 						name, ArrayUtil.append(requestValues, values));
 				}

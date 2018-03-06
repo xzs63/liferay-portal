@@ -15,10 +15,10 @@
 package com.liferay.util.xml;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.petra.xml.DocUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.xml.Element;
@@ -49,11 +49,13 @@ public class BeanToXMLUtil {
 		Method[] methods = clazz.getMethods();
 
 		for (Method method : methods) {
-			if (method.getName().startsWith("get") &&
-				!method.getName().equals("getClass")) {
+			String methodName = method.getName();
+
+			if (methodName.startsWith("get") &&
+				!methodName.equals("getClass")) {
 
 				String memberName = StringUtil.replace(
-					method.getName(), "get", StringPool.BLANK);
+					methodName, "get", StringPool.BLANK);
 
 				memberName = TextFormatter.format(memberName, TextFormatter.I);
 				memberName = TextFormatter.format(memberName, TextFormatter.K);

@@ -40,7 +40,7 @@ import org.osgi.service.component.annotations.Component;
 	service = MVCActionCommand.class
 )
 public class DeleteWorkflowDefinitionMVCActionCommand
-	extends UpdateWorkflowDefinitionMVCActionCommand {
+	extends BaseWorkflowDefinitionMVCActionCommand {
 
 	@Override
 	protected void doProcessAction(
@@ -56,12 +56,12 @@ public class DeleteWorkflowDefinitionMVCActionCommand
 		workflowDefinitionManager.undeployWorkflowDefinition(
 			themeDisplay.getCompanyId(), themeDisplay.getUserId(), name,
 			version);
-
-		addSuccessMessage(actionRequest, actionResponse);
 	}
 
 	@Override
-	protected String getSuccessMessage(ResourceBundle resourceBundle) {
+	protected String getSuccessMessage(ActionRequest actionRequest) {
+		ResourceBundle resourceBundle = getResourceBundle(actionRequest);
+
 		return LanguageUtil.get(
 			resourceBundle, "workflow-deleted-successfully");
 	}

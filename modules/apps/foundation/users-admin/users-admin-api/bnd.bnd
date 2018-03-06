@@ -4,6 +4,6 @@ Bundle-Version: 2.1.0
 Export-Package:\
 	com.liferay.users.admin.configuration,\
 	com.liferay.users.admin.constants,\
-	com.liferay.users.admin.display.context
+	com.liferay.users.admin.user.action.contributor
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title:
